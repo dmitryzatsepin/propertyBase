@@ -1,0 +1,35 @@
+{
+  "name": "PropertyBase-root",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Monorepo for WebApp and Backend",
+  "scripts": {
+    "dev": "pnpm -r --parallel run dev",
+    "build": "pnpm -r run build",
+    "clean": "pnpm -r run clean",
+    "lint": "pnpm --parallel --filter \"./packages/**\" lint",
+    "format": "prettier --write . --ignore-unknown",
+    "typecheck": "pnpm --filter \"./packages/**\" typecheck",
+    "dev:web": "pnpm --filter @my-org/webapp dev",
+    "dev:api": "pnpm --filter @my-org/backend dev",
+    "build:web": "pnpm --filter @my-org/webapp build",
+    "build:api": "pnpm --filter @my-org/backend build",
+    "b": "pnpm --filter @my-org/backend run",
+    "w": "pnpm --filter @my-org/webapp run"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.0.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-react": "^7.30.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "prettier": "^3.0.0",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "packageManager": "pnpm@10.10.0"
+}
