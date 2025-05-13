@@ -1,6 +1,14 @@
 // src/features/LocationImport/LocationImport.tsx
 import React from 'react';
-import { Container, Paper, Title, Stepper, Alert } from '@mantine/core';
+import {
+  Container,
+  Paper,
+  Title,
+  Stepper,
+  Alert,
+  Text,
+  Button,
+} from '@mantine/core';
 import { IconAlertCircle } from '@tabler/icons-react';
 import { useLocationImport } from './hooks/useLocationImport';
 import { ImportStep } from './types/locationImport.types';
@@ -13,6 +21,7 @@ export const LocationImport: React.FC = () => {
     setSelectedDataSource,
     setUploadedFile,
     processFile,
+    setError,
   } = useLocationImport();
 
   const {
@@ -32,12 +41,12 @@ export const LocationImport: React.FC = () => {
 
   const handleUploadNext = () => {
     processFile();
-    if (currentStep === ImportStep.UPLOAD && uploadedFile && selectedDataSource) {
-        console.log("Moving to results step (placeholder action)");
+    if (currentStep === ImportStep.UPLOAD && uploadedFile && selectedDataSource && !error) {
+        console.log("Simulating processing and moving to results step");
         setCurrentStep(ImportStep.RESULTS);
     }
-  };
 
+  };
 
   return (
     <Container size="md" my="xl">
@@ -53,7 +62,7 @@ export const LocationImport: React.FC = () => {
             color="red"
             variant="filled"
             withCloseButton
-            onClose={() => state.error = null}
+            onClose={() => setError(null)}
             mb="md"
             data-testid="error-alert"
           >
@@ -61,10 +70,11 @@ export const LocationImport: React.FC = () => {
           </Alert>
         )}
 
-        <Stepper active={activeStep} breakpoint="sm" allowNextStepsSelect={false} mb="xl">
+
+        <Stepper active={activeStep} allowNextStepsSelect={false} mb="xl">
           <Stepper.Step label="Upload" description="Select source and file" />
-          <Stepper.Step label="Mapping" description="Map columns (optional)" /> {/* Placeholder */}
-          <Stepper.Step label="Results" description="View imported data" />   {/* Placeholder */}
+          <Stepper.Step label="Mapping" description="Map columns (optional)" />
+          <Stepper.Step label="Results" description="View imported data" />
         </Stepper>
 
         {currentStep === ImportStep.UPLOAD && (
@@ -78,19 +88,17 @@ export const LocationImport: React.FC = () => {
           />
         )}
 
-        {/* Placeholder for ManualMappingStep */}
         {currentStep === ImportStep.MANUAL_MAPPING && (
           <Paper p="md" withBorder>
             <Text>Manual Mapping Step (To be implemented)</Text>
-            <button onClick={() => setCurrentStep(ImportStep.RESULTS)}>Next to Results (Temp)</button>
+            <Button onClick={() => setCurrentStep(ImportStep.RESULTS)} mt="md">Next to Results (Temp)</Button>
           </Paper>
         )}
 
-        {/* Placeholder for ResultsStep */}
         {currentStep === ImportStep.RESULTS && (
           <Paper p="md" withBorder>
             <Text>Results Step (To be implemented)</Text>
-            <button onClick={() => setCurrentStep(ImportStep.UPLOAD)}>Back to Upload (Temp)</button>
+            <Button onClick={() => setCurrentStep(ImportStep.UPLOAD)} mt="md">Back to Upload (Temp)</Button>
           </Paper>
         )}
       </Paper>
