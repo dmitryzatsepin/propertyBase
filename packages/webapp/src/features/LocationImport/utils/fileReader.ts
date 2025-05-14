@@ -61,8 +61,12 @@ export const readExcelFile = (
         const nonEmptyRows = jsonData.filter(row =>
           row.some(cell => cell !== null && cell !== undefined && cell !== '')
         );
-
+        
         resolve(nonEmptyRows);
+
+        console.log('FILEREADER: Skipping nonEmptyRows filter. Resolving with jsonData. Length:', jsonData.length);
+        resolve(jsonData);
+
       } catch (e) {
         console.error('Error processing Excel file:', e);
         if (e instanceof Error) {

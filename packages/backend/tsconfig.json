@@ -1,20 +1,24 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "target": "ESNext",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "outDir": "./dist",
     "rootDir": "./src",
-    "module": "CommonJS",
-    "noEmit": false,
-    "baseUrl": ".",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "sourceMap": true,
+    "baseUrl": "./src",
     "paths": {
       "@/*": ["./src/*"],
-      "@my-org/shared/*": ["../shared/src/*"],
-      "@my-org/shared/types": ["../shared/types"]
+      "@propertybase/shared/*": ["../shared/src/*"],
+      "@propertybase/shared/types": ["../shared/types"]
     }
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "dist"],
-  "references": [
-    // { "path": "../shared" }
-  ]
 }

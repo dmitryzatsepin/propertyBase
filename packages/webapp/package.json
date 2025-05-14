@@ -1,5 +1,5 @@
 {
-  "name": "@my-org/webapp",
+  "name": "@propertybase/webapp",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -16,7 +16,7 @@
     "@mantine/dropzone": "^8.0.0",
     "@mantine/form": "^8.0.0",
     "@mantine/hooks": "^8.0.0",
-    "@my-org/shared": "workspace:*",
+    "@propertybase/shared": "workspace:*",
     "@tabler/icons-react": "^3.31.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",

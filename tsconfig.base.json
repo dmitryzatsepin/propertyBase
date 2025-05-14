@@ -13,8 +13,8 @@
     "noEmit": true,
     "baseUrl": ".",
     "paths": {
-      "@my-org/shared/*": ["packages/shared/src/*"],
-      "@my-org/shared/types": ["packages/shared/types"]
+      "@propertybase/shared/*": ["packages/shared/src/*"],
+      "@propertybase/shared/types": ["packages/shared/types"]
     }
   }
 }

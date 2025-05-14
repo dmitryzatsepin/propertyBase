@@ -1,0 +1,23 @@
+# PROPERTYBASE/docker-compose.yml
+services:
+  postgres_db:
+    image: postgres:15
+    container_name: propertybase_postgres_dev
+    restart: always
+    environment:
+      POSTGRES_USER: dimpin
+      POSTGRES_PASSWORD: iPdeem71db!
+      POSTGRES_DB: propertybase_dev
+    ports:
+      - "5433:5432"
+    volumes:
+      - propertybase_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dimpin -d propertybase_dev"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  propertybase_postgres_data:
+    driver: local

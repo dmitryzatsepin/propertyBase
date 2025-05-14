@@ -1,0 +1,37 @@
+// prisma/schema.prisma
+
+generator client {
+  provider        = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Enum для источника данных, если ты хочешь хранить его в БД типизированно
+enum LocationDataSource {
+  PROPERTY_FINDER
+  BAYUT
+}
+
+model Location {
+  id             String  @id @default(cuid())
+  locationPath   String
+  city           String?
+  community      String?
+  subcommunity   String?
+  property       String?
+  source         LocationDataSource
+  sourceSpecificId String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@unique([locationPath, source], name: "unique_location_path_per_source")
+  @@index([locationPath])
+  @@index([city])
+  @@index([community])
+  @@index([source])
+  @@map("locations")
+}

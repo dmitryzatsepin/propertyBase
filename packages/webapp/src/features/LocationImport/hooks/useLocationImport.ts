@@ -1,16 +1,16 @@
 // src/features/LocationImport/hooks/useLocationImport.ts
-import { useState } from 'react';
+import { useReducer } from 'react'; // <--- Импортируем useReducer
 import {
   ImportStep,
   LocationDataSource,
   LocationImportState,
   ProcessedLocationData,
+  ActionType, // <--- Импортируем типы экшенов
+  LocationImportAction,
 } from '../types/locationImport.types';
-import { readExcelFile } from '../utils/fileReader';
-import { processPropertyFinderData } from '../utils/dataProcessorPropertyFinder';
-import { processBayutData } from '../utils/dataProcessorBayut'; 
+import { apiClient } from '../services/locationImport.api';
+import { processUploadedFile } from '../services/fileProcessing.service';
 
-// Define the initial state for the import process
 const initialState: LocationImportState = {
   currentStep: ImportStep.UPLOAD,
   selectedDataSource: null,
@@ -18,94 +18,100 @@ const initialState: LocationImportState = {
   rawExcelData: [],
   processedData: [],
   isLoading: false,
+  isSaving: false,
   error: null,
+  successMessage: null,
+};
+
+// --- Функция-редьюсер ---
+const locationImportReducer = (
+  state: LocationImportState,
+  action: LocationImportAction
+): LocationImportState => {
+  switch (action.type) {
+    case ActionType.SET_CURRENT_STEP:
+      return { ...state, currentStep: action.payload, error: null, successMessage: null };
+    case ActionType.SET_SELECTED_DATA_SOURCE:
+      return { ...state, selectedDataSource: action.payload };
+    case ActionType.SET_UPLOADED_FILE:
+      return {
+        ...state,
+        uploadedFile: action.payload,
+        rawExcelData: [],
+        processedData: [],
+        error: null,
+        successMessage: null,
+      };
+    case ActionType.PROCESS_FILE_START:
+      return { ...state, isLoading: true, error: null, successMessage: null, rawExcelData: [], processedData: [] };
+    case ActionType.PROCESS_FILE_SUCCESS:
+      return {
+        ...state,
+        isLoading: false,
+        rawExcelData: action.payload.rawExcelData,
+        processedData: action.payload.processedData,
+        currentStep: ImportStep.RESULTS,
+      };
+    case ActionType.PROCESS_FILE_ERROR:
+      return { ...state, isLoading: false, error: action.payload };
+    case ActionType.SAVE_DATA_START:
+      return { ...state, isSaving: true, error: null, successMessage: null };
+    case ActionType.SAVE_DATA_SUCCESS:
+      return {
+        ...state,
+        isSaving: false,
+        successMessage: action.payload,
+        processedData: [], // Очищаем данные после успешного сохранения
+        // currentStep: ImportStep.UPLOAD, // Можно вернуть на первый шаг
+      };
+    case ActionType.SAVE_DATA_ERROR:
+      return { ...state, isSaving: false, error: action.payload };
+    case ActionType.RESET_MESSAGES:
+      return { ...state, error: null, successMessage: null };
+    default:
+      return state;
+  }
 };
 
 export const useLocationImport = () => {
-  const [state, setState] = useState<LocationImportState>(initialState);
+  const [state, dispatch] = useReducer(locationImportReducer, initialState); // <--- Используем useReducer
 
-  // --- State Update Functions ---
-  const setCurrentStep = (step: ImportStep) => {
-    setState((prevState) => ({ ...prevState, currentStep: step, error: null }));
-  };
+  // --- Функции-действия (теперь они диспатчат экшены) ---
+  const setCurrentStep = (step: ImportStep) => dispatch({ type: ActionType.SET_CURRENT_STEP, payload: step });
+  const setSelectedDataSource = (source: LocationDataSource | null) => dispatch({ type: ActionType.SET_SELECTED_DATA_SOURCE, payload: source });
+  const setUploadedFile = (file: File | null) => dispatch({ type: ActionType.SET_UPLOADED_FILE, payload: file });
+  const resetMessages = () => dispatch({ type: ActionType.RESET_MESSAGES }); // Для кнопки закрытия Alert
 
-  const setSelectedDataSource = (source: LocationDataSource | null) => {
-    setState((prevState) => ({ ...prevState, selectedDataSource: source }));
-  };
-
-  const setUploadedFile = (file: File | null) => {
-    setState((prevState) => ({
-      ...prevState,
-      uploadedFile: file,
-      rawExcelData: [],
-      processedData: [],
-      error: null,
-    }));
-  };
-
-  const setIsLoading = (isLoading: boolean) => {
-    setState((prevState) => ({ ...prevState, isLoading }));
-  };
-
-  const setError = (errorMessage: string | null) => {
-    setState((prevState) => ({ ...prevState, error: errorMessage, isLoading: false }));
-  };
-
-  const setRawExcelData = (data: any[][]) => {
-    setState((prevState) => ({ ...prevState, rawExcelData: data }));
-  };
-
-  const setProcessedData = (data: ProcessedLocationData[]) => {
-    setState((prevState) => ({ ...prevState, processedData: data }));
-  };
-
-  // --- Main Processing Logic ---
   const processFile = async () => {
     if (!state.uploadedFile || !state.selectedDataSource) {
-      setError('Please select a file and a data source before processing.');
+      dispatch({ type: ActionType.PROCESS_FILE_ERROR, payload: 'Please select a file and a data source.' });
       return;
     }
-
-    setIsLoading(true);
-    setError(null);
-    setRawExcelData([]);
-    setProcessedData([]);
-
+    dispatch({ type: ActionType.PROCESS_FILE_START });
     try {
-      let sheetIdentifier: string | number | undefined;
-      if (state.selectedDataSource === LocationDataSource.PROPERTY_FINDER) {
-        sheetIdentifier = 0;
-      } else if (state.selectedDataSource === LocationDataSource.BAYUT) {
-        // sheetIdentifier = 'BayutData'; // Используй имя, если оно есть
-        sheetIdentifier = 0;
-      }
-
-      const rawData = await readExcelFile(state.uploadedFile!, sheetIdentifier);
-      setRawExcelData(rawData);
-      console.log('File read successfully. Raw data:', rawData);
-
-      // --- Call the appropriate data processor ---
-      let processed: ProcessedLocationData[] = [];
-      if (state.selectedDataSource === LocationDataSource.PROPERTY_FINDER) {
-        processed = processPropertyFinderData(rawData);
-      } else if (state.selectedDataSource === LocationDataSource.BAYUT) {
-        processed = processBayutData(rawData);
-      } else {
-        // Should not happen if selectedDataSource is always one of the enums
-        throw new Error('Unsupported data source selected for processing.');
-      }
-      setProcessedData(processed);
-      console.log('Data processed. Processed data:', processed);
-      // --- End data processing ---
-
-      setCurrentStep(ImportStep.RESULTS);
-
+      const result = await processUploadedFile({
+        file: state.uploadedFile,
+        dataSource: state.selectedDataSource,
+      });
+      dispatch({ type: ActionType.PROCESS_FILE_SUCCESS, payload: result });
     } catch (e) {
-      console.error('Error during file processing in hook:', e);
-      const errorMessage = e instanceof Error ? e.message : 'An unknown error occurred.';
-      setError(errorMessage);
-    } finally {
-      setIsLoading(false);
+      const errorMessage = e instanceof Error ? e.message : 'An unknown error occurred during file processing.';
+      dispatch({ type: ActionType.PROCESS_FILE_ERROR, payload: errorMessage });
+    }
+  };
+
+  const saveProcessedDataToDB = async (): Promise<void> => {
+    if (!state.processedData || state.processedData.length === 0) {
+      dispatch({ type: ActionType.SAVE_DATA_ERROR, payload: 'No processed data available to save.' });
+      return;
+    }
+    dispatch({ type: ActionType.SAVE_DATA_START });
+    try {
+      const result = await apiClient.saveLocations(state.processedData);
+      dispatch({ type: ActionType.SAVE_DATA_SUCCESS, payload: `Successfully saved ${result.count} locations.` });
+    } catch (e) {
+      const errorMessage = e instanceof Error ? e.message : 'An unknown error occurred while saving data.';
+      dispatch({ type: ActionType.SAVE_DATA_ERROR, payload: errorMessage });
     }
   };
 
@@ -114,10 +120,8 @@ export const useLocationImport = () => {
     setCurrentStep,
     setSelectedDataSource,
     setUploadedFile,
-    setIsLoading,
-    setError,
-    setRawExcelData,
-    setProcessedData,
+    resetMessages,
     processFile,
+    saveProcessedDataToDB,
   };
 };
