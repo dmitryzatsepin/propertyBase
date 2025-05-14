@@ -8,6 +8,7 @@ import {
   Alert,
   Text,
   Button,
+  Group,
 } from '@mantine/core';
 import { IconAlertCircle } from '@tabler/icons-react';
 import { useLocationImport } from './hooks/useLocationImport';
@@ -41,11 +42,6 @@ export const LocationImport: React.FC = () => {
 
   const handleUploadNext = () => {
     processFile();
-    // if (currentStep === ImportStep.UPLOAD && uploadedFile && selectedDataSource && !error) {
-    //     console.log("Simulating processing and moving to results step");
-    //     setCurrentStep(ImportStep.RESULTS);
-    // }
-
   };
 
   return (
@@ -98,6 +94,7 @@ export const LocationImport: React.FC = () => {
         {currentStep === ImportStep.RESULTS && (
           <Paper p="md" withBorder>
           <Title order={4} mb="sm">Processing Results</Title>
+          {/* TODO: Replace with DataTable component */}
           {state.processedData.length > 0 ? (
             <>
               <Text>Successfully processed {state.processedData.length} locations.</Text>
@@ -105,12 +102,31 @@ export const LocationImport: React.FC = () => {
               <pre style={{ maxHeight: '200px', overflowY: 'auto', background: '#f0f0f0', padding: '10px' }}>
                 {JSON.stringify(state.processedData.slice(0, 5), null, 2)}
               </pre>
+              {/* TODO: <DataTable data={state.processedData} /> */}
             </>
           ) : (
             <Text>No data processed or data is empty.</Text>
           )}
           {state.error && <Alert color="red" title="Processing Error">{state.error}</Alert>}
-          <Button onClick={() => setCurrentStep(ImportStep.UPLOAD)} mt="md">Import Another File</Button>
+
+          
+          <Group justify="center" mt="xl"> {/* Оборачиваем кнопку в Group с justify="center" */}
+            <Button onClick={() => setCurrentStep(ImportStep.UPLOAD)} variant="outline" data-testid="import-another-button">
+              Import Another File
+            </Button>
+          </Group>
+
+          <Group justify="center" mt="xl">
+            <Button variant="filled" /* onClick={handleSaveToDatabase} */ data-testid="save-to-db-button">
+              Save to Database
+            </Button>
+            <Button variant="outline" /* onClick={handleExportToExcel} */       data-testid="export-excel-button">
+              Export to Excel
+            </Button>
+            <Button variant="outline" /* onClick={handleExportToBitrix24} */ data-testid="export-bitrix24-button">
+              Export to Bitrix24
+            </Button>
+          </Group>
         </Paper>
         )}
       </Paper>

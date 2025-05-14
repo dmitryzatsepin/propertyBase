@@ -13,7 +13,11 @@ export enum LocationDataSource {
   
   export interface ProcessedLocationData {
     id: string | number | null;
-    name: string;
+    locationPath: string;
+    city: string | null;
+    community: string | null;
+    subcommunity: string | null;
+    property: string | null;
     source: LocationDataSource;
     [key: string]: any;
   }
@@ -26,6 +30,4 @@ export enum LocationDataSource {
     processedData: ProcessedLocationData[];
     isLoading: boolean;
     error: string | null;
-    // Optional: Add properties for mapping configuration if a mapping step is implemented
-    // columnMapping?: { [key: string]: string };
   }

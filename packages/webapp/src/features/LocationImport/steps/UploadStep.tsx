@@ -4,6 +4,7 @@ import { Box, Button, Stack } from '@mantine/core';
 import { LocationDataSource } from '../types/locationImport.types';
 import { DataSourceSelector } from '../components/DataSourceSelector';
 import { ExcelDropzone } from '../components/ExcelDropzone';
+import { SourceFileInstructions } from '../components/SourceFileInstructions'; // Import the new component
 
 interface UploadStepProps {
   selectedDataSource: LocationDataSource | null;
@@ -29,6 +30,9 @@ export const UploadStep: React.FC<UploadStepProps> = ({
         onDataSourceChange={setSelectedDataSource}
         isLoading={isLoading}
       />
+
+      {/* Display instructions if a data source is selected */}
+      {selectedDataSource && <SourceFileInstructions dataSource={selectedDataSource} />}
 
       <ExcelDropzone
         uploadedFile={uploadedFile}
