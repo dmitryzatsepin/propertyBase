@@ -23,7 +23,7 @@ export const UploadStep: React.FC<UploadStepProps> = ({
   isLoading,
 }) => {
   return (
-    <Stack spacing="lg">
+    <Stack gap="lg">
       <DataSourceSelector
         selectedDataSource={selectedDataSource}
         onDataSourceChange={setSelectedDataSource}

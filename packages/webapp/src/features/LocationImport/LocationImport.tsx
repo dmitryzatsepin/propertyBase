@@ -41,10 +41,10 @@ export const LocationImport: React.FC = () => {
 
   const handleUploadNext = () => {
     processFile();
-    if (currentStep === ImportStep.UPLOAD && uploadedFile && selectedDataSource && !error) {
-        console.log("Simulating processing and moving to results step");
-        setCurrentStep(ImportStep.RESULTS);
-    }
+    // if (currentStep === ImportStep.UPLOAD && uploadedFile && selectedDataSource && !error) {
+    //     console.log("Simulating processing and moving to results step");
+    //     setCurrentStep(ImportStep.RESULTS);
+    // }
 
   };
 
