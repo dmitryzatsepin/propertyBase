@@ -7,6 +7,8 @@ import {
   ProcessedLocationData,
 } from '../types/locationImport.types';
 import { readExcelFile } from '../utils/fileReader';
+import { processPropertyFinderData } from '../utils/dataProcessorPropertyFinder';
+import { processBayutData } from '../utils/dataProcessorBayut'; 
 
 // Define the initial state for the import process
 const initialState: LocationImportState = {
@@ -66,40 +68,42 @@ export const useLocationImport = () => {
 
     setIsLoading(true);
     setError(null);
-    setRawExcelData([]); // Clear previous raw data
-    setProcessedData([]); // Clear previous processed data
-
-    // --- ИСКУССТВЕННАЯ ЗАДЕРЖКА ДЛЯ ТЕСТА ---
-    //await new Promise(resolve => setTimeout(resolve, 3000)); // Задержка 3 секунды
-    // --- КОНЕЦ ИСКУССТВЕННОЙ ЗАДЕРЖКИ ---
+    setRawExcelData([]);
+    setProcessedData([]);
 
     try {
       let sheetIdentifier: string | number | undefined;
       if (state.selectedDataSource === LocationDataSource.PROPERTY_FINDER) {
         sheetIdentifier = 0;
-        console.log('Reading first sheet for Property Finder.');
       } else if (state.selectedDataSource === LocationDataSource.BAYUT) {
-        sheetIdentifier = 'BayutData'; // Оставим это для теста ошибки
-        console.log(`Attempting to read sheet: "${sheetIdentifier}" for Bayut.`);
+        // sheetIdentifier = 'BayutData'; // Используй имя, если оно есть
+        sheetIdentifier = 0;
       }
 
       const rawData = await readExcelFile(state.uploadedFile!, sheetIdentifier);
       setRawExcelData(rawData);
       console.log('File read successfully. Raw data:', rawData);
 
-      // TODO: Здесь будет логика вызова dataProcessors
-      // const processed = processSpecificData(rawData, state.selectedDataSource);
-      // setProcessedData(processed);
+      // --- Call the appropriate data processor ---
+      let processed: ProcessedLocationData[] = [];
+      if (state.selectedDataSource === LocationDataSource.PROPERTY_FINDER) {
+        processed = processPropertyFinderData(rawData);
+      } else if (state.selectedDataSource === LocationDataSource.BAYUT) {
+        processed = processBayutData(rawData);
+      } else {
+        // Should not happen if selectedDataSource is always one of the enums
+        throw new Error('Unsupported data source selected for processing.');
+      }
+      setProcessedData(processed);
+      console.log('Data processed. Processed data:', processed);
+      // --- End data processing ---
 
-      // Если все прошло успешно (чтение и последующая обработка), переходим на RESULTS
-      setCurrentStep(ImportStep.RESULTS); // <--- ПЕРЕХОД ТОЛЬКО ПРИ УСПЕХЕ
+      setCurrentStep(ImportStep.RESULTS);
 
     } catch (e) {
       console.error('Error during file processing in hook:', e);
       const errorMessage = e instanceof Error ? e.message : 'An unknown error occurred.';
       setError(errorMessage);
-      // При ошибке остаемся на текущем шаге UPLOAD
-      // setCurrentStep(ImportStep.UPLOAD); // Это не нужно, т.к. мы не меняли шаг до ошибки
     } finally {
       setIsLoading(false);
     }

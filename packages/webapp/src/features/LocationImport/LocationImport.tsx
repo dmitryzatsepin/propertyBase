@@ -97,9 +97,21 @@ export const LocationImport: React.FC = () => {
 
         {currentStep === ImportStep.RESULTS && (
           <Paper p="md" withBorder>
-            <Text>Results Step (To be implemented)</Text>
-            <Button onClick={() => setCurrentStep(ImportStep.UPLOAD)} mt="md">Back to Upload (Temp)</Button>
-          </Paper>
+          <Title order={4} mb="sm">Processing Results</Title>
+          {state.processedData.length > 0 ? (
+            <>
+              <Text>Successfully processed {state.processedData.length} locations.</Text>
+              {/* Для отладки можно вывести первые несколько записей */}
+              <pre style={{ maxHeight: '200px', overflowY: 'auto', background: '#f0f0f0', padding: '10px' }}>
+                {JSON.stringify(state.processedData.slice(0, 5), null, 2)}
+              </pre>
+            </>
+          ) : (
+            <Text>No data processed or data is empty.</Text>
+          )}
+          {state.error && <Alert color="red" title="Processing Error">{state.error}</Alert>}
+          <Button onClick={() => setCurrentStep(ImportStep.UPLOAD)} mt="md">Import Another File</Button>
+        </Paper>
         )}
       </Paper>
     </Container>
