@@ -6,18 +6,11 @@ interface SaveLocationsResponse {
   count: number;
 }
 
-/**
- * Sends processed location data to the backend API for saving.
- * @param processedData - An array of processed location data.
- * @returns A promise that resolves with the server's response.
- * @throws Error if the request fails or the server returns an error.
- */
 export const apiClient = {
   saveLocations: async (
     processedData: ProcessedLocationData[]
   ): Promise<SaveLocationsResponse> => {
     if (!processedData || processedData.length === 0) {
-      // Эта проверка также может быть в хуке перед вызовом
       throw new Error('No processed data available to save.');
     }
 
@@ -41,5 +34,4 @@ export const apiClient = {
     return responseData as SaveLocationsResponse;
   },
 
-  // Здесь можно добавить другие API-вызовы, связанные с импортом, если понадобятся
 };

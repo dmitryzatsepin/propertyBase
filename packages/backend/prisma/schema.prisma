@@ -10,7 +10,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Enum для источника данных, если ты хочешь хранить его в БД типизированно
 enum LocationDataSource {
   PROPERTY_FINDER
   BAYUT

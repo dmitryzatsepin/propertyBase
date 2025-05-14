@@ -18,7 +18,6 @@ export const processPropertyFinderData = (
   
   const processedList: ProcessedLocationData[] = [];
 
-  // Define the 0-based column indices for the data we need to extract
   const COLUMN_INDEX = {
     CITY: 0,
     COMMUNITY: 2,
@@ -26,7 +25,6 @@ export const processPropertyFinderData = (
     PROPERTY: 6,
   };
 
-  // Check if there's enough data to process (at least a header row and one data row)
   if (rawData.length < 2) {
     console.warn(
       "PROCESSOR_PF: Data is too short to process. Expected at least a header row and one data row."

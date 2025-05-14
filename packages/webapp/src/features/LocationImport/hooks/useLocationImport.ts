@@ -1,11 +1,11 @@
 // src/features/LocationImport/hooks/useLocationImport.ts
-import { useReducer } from 'react'; // <--- Импортируем useReducer
+import { useReducer } from 'react';
 import {
   ImportStep,
   LocationDataSource,
   LocationImportState,
   ProcessedLocationData,
-  ActionType, // <--- Импортируем типы экшенов
+  ActionType,
   LocationImportAction,
 } from '../types/locationImport.types';
 import { apiClient } from '../services/locationImport.api';
@@ -61,7 +61,7 @@ const locationImportReducer = (
         ...state,
         isSaving: false,
         successMessage: action.payload,
-        processedData: [], // Очищаем данные после успешного сохранения
+        processedData: [],
         // currentStep: ImportStep.UPLOAD, // Можно вернуть на первый шаг
       };
     case ActionType.SAVE_DATA_ERROR:
@@ -74,13 +74,11 @@ const locationImportReducer = (
 };
 
 export const useLocationImport = () => {
-  const [state, dispatch] = useReducer(locationImportReducer, initialState); // <--- Используем useReducer
-
-  // --- Функции-действия (теперь они диспатчат экшены) ---
+  const [state, dispatch] = useReducer(locationImportReducer, initialState);
   const setCurrentStep = (step: ImportStep) => dispatch({ type: ActionType.SET_CURRENT_STEP, payload: step });
   const setSelectedDataSource = (source: LocationDataSource | null) => dispatch({ type: ActionType.SET_SELECTED_DATA_SOURCE, payload: source });
   const setUploadedFile = (file: File | null) => dispatch({ type: ActionType.SET_UPLOADED_FILE, payload: file });
-  const resetMessages = () => dispatch({ type: ActionType.RESET_MESSAGES }); // Для кнопки закрытия Alert
+  const resetMessages = () => dispatch({ type: ActionType.RESET_MESSAGES });
 
   const processFile = async () => {
     if (!state.uploadedFile || !state.selectedDataSource) {

@@ -14,12 +14,6 @@ interface ProcessFileResult {
   processedData: ProcessedLocationData[];
 }
 
-/**
- * Reads and processes an Excel file based on the data source.
- * @param params - Object containing the file and data source.
- * @returns A promise resolving to an object with raw and processed data.
- * @throws Error if reading or processing fails.
- */
 export const processUploadedFile = async ({
   file,
   dataSource,
@@ -31,7 +25,7 @@ export const processUploadedFile = async ({
     sheetIdentifier = 0;
     console.log('FILE_PROC_SERVICE: Reading first sheet for Property Finder.');
   } else if (dataSource === LocationDataSource.BAYUT) {
-    sheetIdentifier = 0; // Или 'BayutData', или другой индекс/имя
+    sheetIdentifier = 0;
     console.log(`FILE_PROC_SERVICE: Attempting to read sheet: "${sheetIdentifier || 'first'}" for Bayut.`);
   }
 
