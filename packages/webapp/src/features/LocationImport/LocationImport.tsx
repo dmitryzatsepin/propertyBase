@@ -1,7 +1,6 @@
 // src/features/LocationImport/LocationImport.tsx
 import React from 'react';
-import { Container, Paper, Title, Stepper, Alert } from '@mantine/core';
-import { IconAlertCircle, IconCheck } from '@tabler/icons-react';
+import { Container, Paper, Title, Stepper } from '@mantine/core';
 import { useLocationImport } from './hooks/useLocationImport';
 import { ImportStep } from './types/locationImport.types';
 import { UploadStep } from './steps/UploadStep';
@@ -16,7 +15,6 @@ export const LocationImport: React.FC = () => {
     setUploadedFile,
     processFile,
     saveProcessedDataToDB,
-    resetMessages,
   } = useLocationImport();
 
   const {
@@ -25,8 +23,6 @@ export const LocationImport: React.FC = () => {
     uploadedFile,
     isLoading,
     isSaving,
-    error,
-    successMessage,
     processedData,
   } = state;
 
@@ -36,9 +32,6 @@ export const LocationImport: React.FC = () => {
     [ImportStep.RESULTS]: 2,
   };
   const activeStep = stepIndexMap[currentStep];
-
-  const messageToDisplayForAlert = successMessage || error;
-  const isErrorForAlert = !!error && !successMessage;
 
   const renderCurrentStep = () => {
     switch (currentStep) {
@@ -76,21 +69,6 @@ export const LocationImport: React.FC = () => {
         <Title order={2} ta="center" mb="xl">
           Import Locations from Excel
         </Title>
-
-        {messageToDisplayForAlert && (
-          <Alert
-            icon={isErrorForAlert ? <IconAlertCircle size="1rem" /> : <IconCheck size="1rem" />}
-            title={isErrorForAlert ? "Error" : "Success"}
-            color={isErrorForAlert ? "red" : "green"}
-            variant="filled"
-            withCloseButton
-            onClose={resetMessages}
-            mb="md"
-            data-testid={isErrorForAlert ? "error-alert" : "success-alert"}
-          >
-            {messageToDisplayForAlert}
-          </Alert>
-        )}
 
         <Stepper active={activeStep} allowNextStepsSelect={false} mb="xl">
           <Stepper.Step label="Upload" description="Select source and file" />

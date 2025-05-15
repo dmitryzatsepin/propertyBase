@@ -1,10 +1,12 @@
 // src/App.tsx
-import { MantineProvider, Box } from '@mantine/core';
+import { MantineProvider } from '@mantine/core';
+import { Notifications } from '@mantine/notifications';
 import { LocationImport } from './features/LocationImport/LocationImport';
 
 function App() {
   return (
     <MantineProvider>
+      <Notifications position="top-right" />
       <LocationImport />
     </MantineProvider>
   );

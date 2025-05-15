@@ -1,5 +1,8 @@
 // src/features/LocationImport/hooks/useLocationImport.ts
+import React from 'react';
 import { useReducer } from 'react';
+import { notifications } from '@mantine/notifications';
+import { IconCheck, IconX, IconAlertTriangle } from '@tabler/icons-react';
 import {
   ImportStep,
   LocationDataSource,
@@ -19,8 +22,6 @@ const initialState: LocationImportState = {
   processedData: [],
   isLoading: false,
   isSaving: false,
-  error: null,
-  successMessage: null,
 };
 
 // --- Функция-редьюсер ---
@@ -30,7 +31,7 @@ const locationImportReducer = (
 ): LocationImportState => {
   switch (action.type) {
     case ActionType.SET_CURRENT_STEP:
-      return { ...state, currentStep: action.payload, error: null, successMessage: null };
+      return { ...state, currentStep: action.payload };
     case ActionType.SET_SELECTED_DATA_SOURCE:
       return { ...state, selectedDataSource: action.payload };
     case ActionType.SET_UPLOADED_FILE:
@@ -39,11 +40,9 @@ const locationImportReducer = (
         uploadedFile: action.payload,
         rawExcelData: [],
         processedData: [],
-        error: null,
-        successMessage: null,
       };
     case ActionType.PROCESS_FILE_START:
-      return { ...state, isLoading: true, error: null, successMessage: null, rawExcelData: [], processedData: [] };
+      return { ...state, isLoading: true, rawExcelData: [], processedData: [] };
     case ActionType.PROCESS_FILE_SUCCESS:
       return {
         ...state,
@@ -53,36 +52,62 @@ const locationImportReducer = (
         currentStep: ImportStep.RESULTS,
       };
     case ActionType.PROCESS_FILE_ERROR:
-      return { ...state, isLoading: false, error: action.payload };
+      notifications.show({
+        title: 'Processing Error',
+        message: action.payload,
+        color: 'red',
+        icon: React.createElement(IconX, { size: "1.1rem" }),
+        autoClose: 5000,
+      });
+      return { ...state, isLoading: false };
     case ActionType.SAVE_DATA_START:
-      return { ...state, isSaving: true, error: null, successMessage: null };
+      return { ...state, isSaving: true };
     case ActionType.SAVE_DATA_SUCCESS:
+      notifications.show({
+        title: 'Success',
+        message: action.payload,
+        color: 'green',
+        icon: React.createElement(IconCheck, { size: "1.1rem" }),
+        autoClose: 5000,
+      });
       return {
         ...state,
         isSaving: false,
-        successMessage: action.payload,
         processedData: [],
-        // currentStep: ImportStep.UPLOAD, // Можно вернуть на первый шаг
+        currentStep: ImportStep.UPLOAD,
       };
     case ActionType.SAVE_DATA_ERROR:
-      return { ...state, isSaving: false, error: action.payload };
-    case ActionType.RESET_MESSAGES:
-      return { ...state, error: null, successMessage: null };
+      notifications.show({
+        title: 'Save Error',
+        message: action.payload,
+        color: 'red',
+        icon: React.createElement(IconX, { size: "1.1rem" }),
+        autoClose: 5000,
+      });
+      return { ...state, isSaving: false };
     default:
+
       return state;
   }
 };
 
 export const useLocationImport = () => {
   const [state, dispatch] = useReducer(locationImportReducer, initialState);
+
+  // Функции для UI, которые теперь диспатчат экшены
   const setCurrentStep = (step: ImportStep) => dispatch({ type: ActionType.SET_CURRENT_STEP, payload: step });
   const setSelectedDataSource = (source: LocationDataSource | null) => dispatch({ type: ActionType.SET_SELECTED_DATA_SOURCE, payload: source });
   const setUploadedFile = (file: File | null) => dispatch({ type: ActionType.SET_UPLOADED_FILE, payload: file });
-  const resetMessages = () => dispatch({ type: ActionType.RESET_MESSAGES });
 
   const processFile = async () => {
     if (!state.uploadedFile || !state.selectedDataSource) {
-      dispatch({ type: ActionType.PROCESS_FILE_ERROR, payload: 'Please select a file and a data source.' });
+      notifications.show({
+        title: 'Input Required',
+        message: 'Please select a file and a data source.',
+        color: 'orange',
+        icon: React.createElement(IconAlertTriangle, { size: "1.1rem" }),
+        autoClose: 3000,
+      });
       return;
     }
     dispatch({ type: ActionType.PROCESS_FILE_START });
@@ -100,7 +125,13 @@ export const useLocationImport = () => {
 
   const saveProcessedDataToDB = async (): Promise<void> => {
     if (!state.processedData || state.processedData.length === 0) {
-      dispatch({ type: ActionType.SAVE_DATA_ERROR, payload: 'No processed data available to save.' });
+      notifications.show({
+        title: 'Input Required',
+        message: 'No processed data available to save.',
+        color: 'orange',
+        icon: React.createElement(IconAlertTriangle, { size: "1.1rem" }),
+        autoClose: 3000,
+      });
       return;
     }
     dispatch({ type: ActionType.SAVE_DATA_START });
@@ -118,7 +149,6 @@ export const useLocationImport = () => {
     setCurrentStep,
     setSelectedDataSource,
     setUploadedFile,
-    resetMessages,
     processFile,
     saveProcessedDataToDB,
   };

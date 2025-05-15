@@ -32,8 +32,6 @@ export enum LocationDataSource {
     processedData: ProcessedLocationData[];
     isLoading: boolean;
     isSaving: boolean;
-    error: string | null;
-    successMessage: string | null;
   }
 
   export enum ActionType {
@@ -46,7 +44,6 @@ export enum LocationDataSource {
     SAVE_DATA_START = 'SAVE_DATA_START',
     SAVE_DATA_SUCCESS = 'SAVE_DATA_SUCCESS',
     SAVE_DATA_ERROR = 'SAVE_DATA_ERROR',
-    RESET_MESSAGES = 'RESET_MESSAGES',
   }
 
   export type LocationImportAction =
@@ -58,5 +55,4 @@ export enum LocationDataSource {
   | { type: ActionType.PROCESS_FILE_ERROR; payload: string }
   | { type: ActionType.SAVE_DATA_START }
   | { type: ActionType.SAVE_DATA_SUCCESS; payload: string }
-  | { type: ActionType.SAVE_DATA_ERROR; payload: string }
-  | { type: ActionType.RESET_MESSAGES };
+  | { type: ActionType.SAVE_DATA_ERROR; payload: string };

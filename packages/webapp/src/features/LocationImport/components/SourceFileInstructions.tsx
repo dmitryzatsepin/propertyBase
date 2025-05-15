@@ -57,16 +57,17 @@ export const SourceFileInstructions: React.FC<SourceFileInstructionsProps> = ({ 
                 </ThemeIcon>
             }
         >
-          <List.Item>The sheet named "BayutData" will be used (if not found, the first sheet will be attempted).</List.Item>
-          <List.Item>The first row can be headers (data processing logic should account for this).</List.Item>
+          <List.Item>The first sheet of the Excel file will be used.</List.Item>
+          <List.Item>The first row should contain headers (it will be skipped).</List.Item>
           <List.Item>
             Expected columns (example, 0-indexed):
             <List withPadding listStyleType="disc" size="xs" spacing={3} mt={3}>
-                <List.Item>Column B (Index 1): Location Name (this will be used for locationPath)</List.Item>
-                {/* Add more expected columns for Bayut as you define its processor */}
+            <List.Item>Column A (Index 0): Emirate (e.g., Dubai) - used as 'City'</List.Item>
+            <List.Item>Column B (Index 1): Location Name (e.g., Mirdif, The Legends, Carmen) - used to determine the most specific part of the hierarchy</List.Item>
+            <List.Item>Column C (Index 2): Location Type (e.g., Neighbourhood, Building, Cluster) - used as 'Location Type'</List.Item>
+            <List.Item>Column D (Index 3): Location Hierarchy (e.g., Dubai{'>'}Mirdif, Dubai{'>'}DAMAC Hills{'>'}The Legends) - used as 'Location Path' and to derive Community/Subcommunity/Property</List.Item>
             </List>
           </List.Item>
-          <List.Item><Text c="dimmed">(Bayut processing logic is currently a placeholder and needs to be defined based on your file structure)</Text></List.Item>
         </List>
       </>
     );
