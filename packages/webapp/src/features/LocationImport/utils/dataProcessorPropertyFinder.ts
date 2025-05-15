@@ -62,6 +62,7 @@ export const processPropertyFinderData = (
       community: community,
       subcommunity: subcommunity,
       property: property,
+      locationType: null,
       source: LocationDataSource.PROPERTY_FINDER,
       sourceSpecificId: null,
     });

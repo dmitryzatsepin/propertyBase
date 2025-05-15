@@ -20,6 +20,7 @@ export const DataTable: React.FC<DataTableProps> = ({ data }) => {
     "Community",
     "Subcommunity",
     "Property",
+    'Type',
     "Source",
   ];
 
@@ -30,6 +31,7 @@ export const DataTable: React.FC<DataTableProps> = ({ data }) => {
       <Table.Td>{row.community || "-"}</Table.Td>
       <Table.Td>{row.subcommunity || "-"}</Table.Td>
       <Table.Td>{row.property || "-"}</Table.Td>
+      <Table.Td>{row.locationType || '-'}</Table.Td>
       <Table.Td>{row.source}</Table.Td>
     </Table.Tr>
   ));

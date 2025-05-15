@@ -2,7 +2,7 @@
 
 generator client {
   provider        = "prisma-client-js"
-  output   = "../node_modules/.prisma/client"
+  //output   = "../node_modules/.prisma/client"
 }
 
 datasource db {
@@ -22,6 +22,7 @@ model Location {
   community      String?
   subcommunity   String?
   property       String?
+  locationType   String?
   source         LocationDataSource
   sourceSpecificId String?
   createdAt      DateTime @default(now())
@@ -32,5 +33,6 @@ model Location {
   @@index([city])
   @@index([community])
   @@index([source])
+  @@index([locationType])
   @@map("locations")
 }

@@ -36,6 +36,7 @@ export const LocationService = {
         community: loc.community,
         subcommunity: loc.subcommunity,
         property: loc.property,
+        locationType: loc.locationType,
         source: prismaSourceValue,
         sourceSpecificId: loc.sourceSpecificId,
       };

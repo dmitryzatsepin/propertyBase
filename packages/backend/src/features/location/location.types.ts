@@ -11,6 +11,7 @@ export interface CreateLocationDto {
   community: string | null;
   subcommunity: string | null;
   property: string | null;
+  locationType: string | null;
   source: IncomingLocationDataSource;
   sourceSpecificId?: string | null;
 }

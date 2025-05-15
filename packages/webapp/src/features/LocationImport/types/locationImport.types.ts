@@ -18,7 +18,9 @@ export enum LocationDataSource {
     community: string | null;
     subcommunity: string | null;
     property: string | null;
+    locationType: string | null;
     source: LocationDataSource;
+    sourceSpecificId?: string | null;
     [key: string]: any;
   }
   
