@@ -1,11 +1,10 @@
-// src/features/LocationImport/LocationImport.tsx
-import React from 'react';
-import { Container, Paper, Title, Stepper } from '@mantine/core';
-import { useLocationImport } from './hooks/useLocationImport';
-import { ImportStep } from './types/locationImport.types';
-import { UploadStep } from './steps/UploadStep';
-import { MappingStep } from './steps/MappingStep';
-import { ResultsStep } from './steps/ResultsStep';
+import React from "react";
+import { Container, Paper, Title, Stepper } from "@mantine/core";
+import { useLocationImport } from "./hooks/useLocationImport";
+import { ImportStep } from "./types/locationImport.types";
+import { UploadStep } from "./steps/UploadStep";
+import { MappingStep } from "./steps/MappingStep";
+import { ResultsStep } from "./steps/ResultsStep";
 
 export const LocationImport: React.FC = () => {
   const {
@@ -13,8 +12,10 @@ export const LocationImport: React.FC = () => {
     setCurrentStep,
     setSelectedDataSource,
     setUploadedFile,
-    processFile,
+    readFileAndInitiateMapping,
+    applyMappingAndProcessData,
     saveProcessedDataToDB,
+    updateColumnMapping,
   } = useLocationImport();
 
   const {
@@ -24,6 +25,8 @@ export const LocationImport: React.FC = () => {
     isLoading,
     isSaving,
     processedData,
+    excelHeaders,
+    columnMapping,
   } = state;
 
   const stepIndexMap: Record<ImportStep, number> = {
@@ -42,18 +45,28 @@ export const LocationImport: React.FC = () => {
             setSelectedDataSource={setSelectedDataSource}
             uploadedFile={uploadedFile}
             setUploadedFile={setUploadedFile}
-            onNext={processFile}
+            onNext={readFileAndInitiateMapping}
             isLoading={isLoading}
           />
         );
       case ImportStep.MANUAL_MAPPING:
-        return <MappingStep setCurrentStep={setCurrentStep} />;
+        return (
+          <MappingStep
+            excelHeaders={excelHeaders}
+            currentMapping={columnMapping}
+            selectedDataSource={state.selectedDataSource}
+            onMappingChange={updateColumnMapping}
+            onProcessData={applyMappingAndProcessData}
+            onBack={() => setCurrentStep(ImportStep.UPLOAD)}
+            isLoading={isLoading}
+          />
+        );
       case ImportStep.RESULTS:
         return (
           <ResultsStep
             processedData={processedData}
             isSaving={isSaving}
-            isLoading={isLoading}
+            isLoading={isLoading || isSaving}
             onSaveToDatabase={saveProcessedDataToDB}
             onImportAnother={() => setCurrentStep(ImportStep.UPLOAD)}
           />
