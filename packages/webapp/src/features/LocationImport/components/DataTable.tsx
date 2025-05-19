@@ -12,8 +12,6 @@ export const DataTable: React.FC<DataTableProps> = ({ data }) => {
     return <Text>No data to display.</Text>;
   }
 
-  // Define headers for the table
-  // We can make this more dynamic later if needed
   const headers = [
     "Location Path",
     "City",
