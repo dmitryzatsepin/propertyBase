@@ -58,7 +58,7 @@ export const TARGET_FIELDS_CONFIG: TargetFieldConfig[] = [
     label: "Location Type",
     description:
       'e.g., Building, Community. Corresponds to "location_type" for Bayut.',
-    sources: [LocationDataSource.BAYUT, LocationDataSource.PROPERTY_FINDER], // Предположим, может быть и у PF
+    sources: [LocationDataSource.BAYUT],
   },
   { 
     value: "sourceSpecificId", 
