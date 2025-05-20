@@ -9,9 +9,8 @@ import {
   LocationDataSource,
   ProcessedLocationData,
   ColumnMapping,
-  // MappableField, // Больше не нужен здесь напрямую
 } from '../types/locationImport.types';
-import { attemptAutoMapping } from '../utils/autoMapping'; // <--- ИМПОРТ
+import { attemptAutoMapping } from '../utils/autoMapping';
 
 // Интерфейсы остаются здесь, так как они описывают параметры и результаты функций этого сервиса
 interface ReadFileAndGetHeadersParams {

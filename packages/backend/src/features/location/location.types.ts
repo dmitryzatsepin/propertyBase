@@ -7,7 +7,7 @@ export enum IncomingLocationDataSource {
 
 export interface CreateLocationDto {
   locationPath: string;
-  city: string | null;
+  city: string;
   community: string | null;
   subcommunity: string | null;
   property: string | null;

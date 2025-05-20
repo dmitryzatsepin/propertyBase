@@ -60,7 +60,12 @@ export const processPropertyFinderData = (
 
     // Извлекаем данные, используя полученные индексы
     // Если индекс undefined (поле не смаплено или заголовок не найден), значение будет null
-    const city = cityIndex !== undefined ? row[cityIndex]?.toString().trim() || null : null;
+    const cityFromFile = cityIndex !== undefined ? row[cityIndex]?.toString().trim() : undefined;
+      if (!cityFromFile) {
+        console.warn(`PROCESSOR_PF: Skipping Excel row #${excelRowNumberApproximation}: City is missing or empty, but it's required.`);
+        continue;
+      }
+    const city = cityFromFile;
     const community = communityIndex !== undefined ? row[communityIndex]?.toString().trim() || null : null;
     const subcommunity = subcommunityIndex !== undefined ? row[subcommunityIndex]?.toString().trim() || null : null;
     const property = propertyIndex !== undefined ? row[propertyIndex]?.toString().trim() || null : null;

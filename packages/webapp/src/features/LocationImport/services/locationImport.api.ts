@@ -13,7 +13,7 @@ export const apiClient = {
     if (!processedData || processedData.length === 0) {
       throw new Error('No processed data available to save.');
     }
-
+    const dataToSend = processedData.map(({ id, ...rest }) => rest);
     const API_BASE_URL = 'http://localhost:3001/api/v1'; // Можно вынести в .env или константы
 
     const response = await fetch(`${API_BASE_URL}/locations`, {
@@ -21,7 +21,7 @@ export const apiClient = {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(processedData),
+      body: JSON.stringify(dataToSend),
     });
 
     const responseData: SaveLocationsResponse | { message: string } = await response.json();

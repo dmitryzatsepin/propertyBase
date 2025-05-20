@@ -45,7 +45,7 @@ export const processBayutData = (
 
     if (!row) continue;
 
-    const cityFromFile = row[cityIdx!]?.toString().trim() || null;
+    const cityFromFile = row[cityIdx!]?.toString().trim();
     const locationNameFromFile = row[locationNameIdx!]?.toString().trim() || null;
     const locationHierarchyFromFile = row[hierarchyIdx!]?.toString().trim() || null;
     const locationTypeFromFile = locationTypeIdx !== undefined ? row[locationTypeIdx]?.toString().trim() || null : null;

@@ -28,6 +28,7 @@ export const LocationImport: React.FC = () => {
     excelHeaders,
     columnMapping,
   } = state;
+  console.log('LocationImport RENDER - state.selectedDataSource:', selectedDataSource);
 
   const stepIndexMap: Record<ImportStep, number> = {
     [ImportStep.UPLOAD]: 0,
@@ -62,13 +63,18 @@ export const LocationImport: React.FC = () => {
           />
         );
       case ImportStep.RESULTS:
+        console.log('LocationImport rendering ResultsStep - selectedDataSource from state:', selectedDataSource);
         return (
           <ResultsStep
             processedData={processedData}
+            selectedDataSource={selectedDataSource}
             isSaving={isSaving}
             isLoading={isLoading || isSaving}
             onSaveToDatabase={saveProcessedDataToDB}
-            onImportAnother={() => setCurrentStep(ImportStep.UPLOAD)}
+            onImportAnother={() => {
+              console.log('LocationImport: "Import Another File" (onImportAnother) CALLED. Setting currentStep to UPLOAD.');
+              setCurrentStep(ImportStep.UPLOAD);
+            }}
           />
         );
       default:
