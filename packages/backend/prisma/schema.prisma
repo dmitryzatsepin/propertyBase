@@ -2,7 +2,7 @@
 
 generator client {
   provider        = "prisma-client-js"
-  //output   = "../node_modules/.prisma/client"
+  output   = "../node_modules/.prisma/client"
 }
 
 datasource db {
@@ -18,7 +18,7 @@ enum LocationDataSource {
 model Location {
   id             String  @id @default(cuid())
   locationPath   String
-  city           String?
+  city           String
   community      String?
   subcommunity   String?
   property       String?
