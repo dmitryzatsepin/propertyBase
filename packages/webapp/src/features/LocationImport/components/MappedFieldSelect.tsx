@@ -1,12 +1,12 @@
-import React from 'react';
-import { Select } from '@mantine/core';
-import { ColumnMapping, MappableField, LocationDataSource } from '../types/locationImport.types';
-import { TargetFieldConfig } from '../config/mappingFields.config'; // Импортируем тип конфига
+import React from "react";
+import { Select } from "@mantine/core";
+import { LocationDataSource } from "../types/locationImport.types";
+import { TargetFieldConfig } from "../config/mappingFields.config"; // Импортируем тип конфига
 
 interface MappedFieldSelectProps {
   fieldConfig: TargetFieldConfig; // Один элемент из TARGET_FIELDS_CONFIG
   excelHeaderOptions: { value: string; label: string }[];
-  currentMappedValue: string | null | undefined; // Текущее значение из columnMapping
+  currentMappedValue: string | null | undefined;
   onSelectionChange: (selectedExcelHeader: string | null) => void;
   isLoading: boolean;
   selectedDataSource: LocationDataSource | null;
@@ -20,9 +20,10 @@ export const MappedFieldSelect: React.FC<MappedFieldSelectProps> = ({
   isLoading,
   selectedDataSource,
 }) => {
-  const isFieldRequired = fieldConfig.required && 
-                          typeof fieldConfig.required === 'function' && 
-                          fieldConfig.required(selectedDataSource);
+  const isFieldRequired =
+    fieldConfig.required &&
+    typeof fieldConfig.required === "function" &&
+    fieldConfig.required(selectedDataSource);
 
   return (
     <Select
@@ -32,7 +33,9 @@ export const MappedFieldSelect: React.FC<MappedFieldSelectProps> = ({
       placeholder="Select Excel column..."
       data={excelHeaderOptions}
       value={currentMappedValue || ""} // Для Select '' лучше, чем null, чтобы показать плейсхолдер
-      onChange={(value: string | null) => onSelectionChange(value === "" ? null : value)}
+      onChange={(value: string | null) =>
+        onSelectionChange(value === "" ? null : value)
+      }
       disabled={isLoading}
       clearable
       searchable

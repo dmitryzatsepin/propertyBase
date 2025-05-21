@@ -1,95 +1,45 @@
 // packages/webapp/src/config/navigation.config.ts
 import {
-  IconGauge,
-  IconSettings,
-  IconUser,
-  IconTableImport,
-  IconMapPin,
-  IconHomeCog,
-  IconHome2,
-  IconDeviceDesktopAnalytics,
-  IconFingerprint,
-  IconCalendarStats,
+  IconGauge, // Dashboard
+  IconHomeCog, // Properties
+  IconMapPin, // Locations
+  IconPhoto, // Marketing (Brochures)
+  IconUpload, // Listings (Upload to portals)
+  IconUsers, // Users
+  IconSettings, // Settings
+  IconListDetails, // List view
+  IconSquarePlus, // Add
+  IconFileExport, // Export
+  IconTemplate, // Templates
+  IconKey, // API Keys / Integrations
+  IconCurrencyDollar, // Currency
+  IconMail, // Email templates
+  IconFileImport, // Для нашего импорта
 } from "@tabler/icons-react";
 
-// Типы для ссылок
 export interface NavLinkItem {
   icon: React.ElementType;
   label: string;
   path: string;
+  adminOnly?: boolean; // Флаг для элементов, доступных только администратору
 }
 
 export interface MainLinkItem {
   icon: React.ElementType;
   label: string;
-  id: string;
+  id: string; // Уникальный идентификатор для основного раздела
   subLinks: NavLinkItem[];
+  adminOnly?: boolean; // Флаг для целых разделов, доступных только администратору
 }
 
-// Основные разделы (для левой части Double Navbar)
 export const mainLinksData: MainLinkItem[] = [
   {
-    icon: IconHome2, // Используем IconHome2
-    label: "Home", // Изменили label для соответствия
-    id: "home", // Изменили id
+    icon: IconGauge,
+    label: "Dashboard",
+    id: "dashboard",
     subLinks: [
-      { icon: IconGauge, label: "Overview", path: "/" }, // Оставили IconGauge для под-ссылки
-    ],
-  },
-  {
-    icon: IconDeviceDesktopAnalytics, // Используем IconDeviceDesktopAnalytics
-    label: "Analytics", // Изменили label
-    id: "analytics", // Изменили id
-    subLinks: [
-      // Добавь сюда под-ссылки для аналитики, если нужно, или оставь одну
-      {
-        icon: IconDeviceDesktopAnalytics,
-        label: "View Reports",
-        path: "/analytics/reports",
-      },
-    ],
-  },
-  {
-    icon: IconCalendarStats, // Используем IconCalendarStats
-    label: "Releases", // Изменили label (как в примере Mantine)
-    id: "releases", // Изменили id
-    subLinks: [
-      { icon: IconCalendarStats, label: "Version History", path: "/releases" },
-    ],
-  },
-  {
-    icon: IconTableImport,
-    label: "Import Tools",
-    id: "import-tools",
-    subLinks: [
-      {
-        icon: IconTableImport,
-        label: "Import Locations (Excel)",
-        path: "/import/locations-excel",
-      },
-    ],
-  },
-  {
-    icon: IconSettings,
-    label: "Settings",
-    id: "settings",
-    subLinks: [
-      { icon: IconUser, label: "Account", path: "/settings/account" },
-      { icon: IconFingerprint, label: "Security", path: "/settings/security" }, // Используем IconFingerprint для под-ссылки
-      {
-        icon: IconSettings,
-        label: "Application",
-        path: "/settings/application",
-      },
-    ],
-  },
-  // Оставим пару оригинальных, если они тебе нужны
-  {
-    icon: IconMapPin,
-    label: "Locations",
-    id: "locations",
-    subLinks: [
-      { icon: IconMapPin, label: "Manage Locations", path: "/locations" },
+      { icon: IconGauge, label: "Overview", path: "/" },
+      // Можно добавить быстрые действия как под-ссылки или кнопки на странице
     ],
   },
   {
@@ -97,12 +47,113 @@ export const mainLinksData: MainLinkItem[] = [
     label: "Properties",
     id: "properties",
     subLinks: [
-      { icon: IconHomeCog, label: "Manage Properties", path: "/properties" },
+      { icon: IconListDetails, label: "All Properties", path: "/properties" },
+      { icon: IconSquarePlus, label: "Add Property", path: "/properties/add" },
+      // Редактирование будет на странице конкретного объекта, например /properties/:id/edit
+      // Массовые действия - на странице списка объектов
+    ],
+  },
+  {
+    icon: IconMapPin,
+    label: "Locations",
+    id: "locations",
+    adminOnly: true, // Только для администратора
+    subLinks: [
+      {
+        icon: IconListDetails,
+        label: "Manage Locations",
+        path: "/locations/manage",
+      },
+      {
+        icon: IconFileImport,
+        label: "Import Locations (Excel)",
+        path: "/import/locations-excel",
+      }, // Переместил сюда, логично
+      // Добавить/редактировать локацию может быть на странице /locations/manage
+    ],
+  },
+  {
+    icon: IconPhoto,
+    label: "Marketing",
+    id: "marketing",
+    subLinks: [
+      {
+        icon: IconFileExport,
+        label: "Brochures",
+        path: "/marketing/brochures",
+      },
+      {
+        icon: IconTemplate,
+        label: "Brochure Templates",
+        path: "/marketing/templates",
+      },
+    ],
+  },
+  {
+    icon: IconUpload,
+    label: "Listings",
+    id: "listings",
+    adminOnly: true, // Только для администратора
+    subLinks: [
+      {
+        icon: IconUpload,
+        label: "Export to Portals",
+        path: "/listings/export",
+      },
+      {
+        icon: IconKey,
+        label: "Integration Settings",
+        path: "/listings/settings",
+      },
+    ],
+  },
+  {
+    icon: IconUsers,
+    label: "Users",
+    id: "users",
+    adminOnly: true, // Только для администратора
+    subLinks: [
+      { icon: IconListDetails, label: "User List", path: "/users" },
+      // Добавление/редактирование - на странице списка или отдельных страницах
+    ],
+  },
+  {
+    icon: IconSettings,
+    label: "Settings",
+    id: "settings",
+    adminOnly: true, // Только для администратора
+    subLinks: [
+      {
+        icon: IconCurrencyDollar,
+        label: "System Settings",
+        path: "/settings/system",
+      }, // Объединил валюты и языки
+      {
+        icon: IconMail,
+        label: "Notification Templates",
+        path: "/settings/templates/notifications",
+      },
     ],
   },
 ];
 
-// Функция для получения под-ссылок (оставляем как есть)
+// Дополнительные элементы (поиск, уведомления, профиль)
+// Их обычно размещают в Header или в другом месте, а не как часть основного DoubleNavbar.
+// Но если ты хочешь их в Navbar, можно добавить как специальные основные секции.
+// Например, для профиля:
+/*
+export const userProfileLink: MainLinkItem = {
+  icon: IconUserCircle,
+  label: 'Profile',
+  id: 'profile',
+  subLinks: [
+    { icon: IconUserCircle, label: 'My Profile', path: '/profile' },
+    { icon: IconLogout, label: 'Logout', path: '/logout' }, // Потребует IconLogout
+  ]
+};
+*/
+
+// Функция для получения под-ссылок (остается такой же)
 export const getSubLinksForMainSection = (
   activeMainLinkId: string
 ): NavLinkItem[] => {
@@ -110,4 +161,14 @@ export const getSubLinksForMainSection = (
     (link) => link.id === activeMainLinkId
   );
   return activeMainLink ? activeMainLink.subLinks : [];
+};
+
+// Функция для фильтрации ссылок по роли (заглушка, позже будет реальная проверка роли)
+export const getFilteredMainLinks = (isAdmin: boolean): MainLinkItem[] => {
+  if (isAdmin) {
+    return mainLinksData; // Администратор видит все
+  }
+  // Пользователь видит только те разделы, которые не помечены как adminOnly:true
+  // и те разделы, у которых все subLinks не помечены как adminOnly:true (если такая логика нужна)
+  return mainLinksData.filter((link) => !link.adminOnly);
 };
