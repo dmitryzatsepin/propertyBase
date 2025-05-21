@@ -21,7 +21,7 @@ import {
   getSubLinksForMainSection,
   NavLinkItem,
 } from "../../config/navigation.config";
-import logoApp from "../../assets/property.png"; // Убедись, что путь правильный
+import logoApp from "../../assets/logo.png"; // Убедись, что путь правильный
 import classes from "./AppLayout.module.css";
 
 export function AppLayout() {
