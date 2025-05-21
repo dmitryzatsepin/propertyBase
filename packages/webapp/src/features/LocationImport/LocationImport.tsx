@@ -28,7 +28,10 @@ export const LocationImport: React.FC = () => {
     excelHeaders,
     columnMapping,
   } = state;
-  console.log('LocationImport RENDER - state.selectedDataSource:', selectedDataSource);
+  console.log(
+    "LocationImport RENDER - state.selectedDataSource:",
+    selectedDataSource
+  );
 
   const stepIndexMap: Record<ImportStep, number> = {
     [ImportStep.UPLOAD]: 0,
@@ -63,7 +66,10 @@ export const LocationImport: React.FC = () => {
           />
         );
       case ImportStep.RESULTS:
-        console.log('LocationImport rendering ResultsStep - selectedDataSource from state:', selectedDataSource);
+        console.log(
+          "LocationImport rendering ResultsStep - selectedDataSource from state:",
+          selectedDataSource
+        );
         return (
           <ResultsStep
             processedData={processedData}
@@ -72,7 +78,9 @@ export const LocationImport: React.FC = () => {
             isLoading={isLoading || isSaving}
             onSaveToDatabase={saveProcessedDataToDB}
             onImportAnother={() => {
-              console.log('LocationImport: "Import Another File" (onImportAnother) CALLED. Setting currentStep to UPLOAD.');
+              console.log(
+                'LocationImport: "Import Another File" (onImportAnother) CALLED. Setting currentStep to UPLOAD.'
+              );
               setCurrentStep(ImportStep.UPLOAD);
             }}
           />
@@ -83,8 +91,15 @@ export const LocationImport: React.FC = () => {
   };
 
   return (
-    <Container size="md" my="xl">
-      <Paper shadow="xs" p="xl" withBorder>
+    <Container size="md" my="xl" style={{ minWidth: 960 }}>
+      <Paper
+        shadow="xs"
+        p="xl"
+        withBorder
+        style={{
+          width: "100%",
+        }}
+      >
         <Title order={2} ta="center" mb="xl">
           Import Locations from Excel
         </Title>

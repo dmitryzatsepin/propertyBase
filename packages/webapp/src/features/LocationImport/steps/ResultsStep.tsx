@@ -25,13 +25,10 @@ export const ResultsStep: React.FC<ResultsStepProps> = ({
   onSaveToDatabase,
   onImportAnother,
 }) => {
-  console.log('ResultsStep RENDER - selectedDataSource prop:', selectedDataSource);
-  const sourcePrefix =
-    selectedDataSource === LocationDataSource.PROPERTY_FINDER
-      ? "PropertyFinder"
-      : selectedDataSource === LocationDataSource.BAYUT
-        ? "Bayut"
-        : "UnknownSource";
+  console.log(
+    "ResultsStep RENDER - selectedDataSource prop:",
+    selectedDataSource
+  );
 
   const handleExportToExcel = () => {
     console.log("RESULTS_STEP: Export to Excel button clicked.");
@@ -58,7 +55,10 @@ export const ResultsStep: React.FC<ResultsStepProps> = ({
         sourcePrefix = "Bayut";
       }
 
-      exportToExcel(processedData, `${sourcePrefix}_locations_${formattedDate}`);
+      exportToExcel(
+        processedData,
+        `${sourcePrefix}_locations_${formattedDate}`
+      );
       console.log("RESULTS_STEP: exportToExcel function was called."); // <--- ЛОГ 4
     } else {
       console.warn(
@@ -106,9 +106,9 @@ export const ResultsStep: React.FC<ResultsStepProps> = ({
         >
           Export to Excel
         </Button>
-        <Button variant="outline" data-testid="export-bitrix24-button">
+        {/* <Button variant="outline" data-testid="export-bitrix24-button">
           Export to Bitrix24
-        </Button>
+        </Button> */}
       </Group>
 
       <Group justify="center" mt="xl">
