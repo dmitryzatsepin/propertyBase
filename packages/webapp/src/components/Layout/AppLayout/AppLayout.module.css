@@ -1,0 +1,46 @@
+/* packages/webapp/src/components/Layout/AppLayout.module.css */
+.navbar {
+  height: 100vh;
+  width: auto;
+  display: flex;
+  flex-direction: column;
+  background-color: light-dark(
+    var(--mantine-color-white),
+    var(--mantine-color-dark-7)
+  );
+  border-right: 1px solid
+    light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-5));
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+}
+
+.header {
+  padding: var(--mantine-spacing-md);
+  border-bottom: 1px solid
+    light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-5));
+}
+
+.links {
+  flex-grow: 1;
+  overflow: hidden;
+}
+
+.linksInner {
+  padding: var(--mantine-spacing-md) var(--mantine-spacing-md);
+  overflow-y: auto;
+}
+
+.footer {
+  border-top: 1px solid
+    light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-5));
+  padding: var(--mantine-spacing-md);
+}
+
+.pageContent {
+  margin-left: 400px;
+  padding: var(--mantine-spacing-md);
+  flex-grow: 1;
+  box-sizing: border-box;
+}

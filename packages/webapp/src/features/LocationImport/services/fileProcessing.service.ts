@@ -1,16 +1,17 @@
 // src/features/LocationImport/services/importWorkflow.service.ts
-import { notifications } from '@mantine/notifications';
-import React from 'react';
-import { IconAlertTriangle } from '@tabler/icons-react';
-import { readExcelFile } from '../utils/fileReader';
-import { processPropertyFinderData } from '../utils/dataProcessorPropertyFinder';
-import { processBayutData } from '../utils/dataProcessorBayut';
+import { notifications } from "@mantine/notifications";
+import React from "react";
+import { IconAlertTriangle } from "@tabler/icons-react";
+import { readExcelFile } from "../utils/fileReader";
+import { processPropertyFinderData } from "../utils/dataProcessorPropertyFinder";
+import { processBayutData } from "../utils/dataProcessorBayut";
 import {
   LocationDataSource,
   ProcessedLocationData,
   ColumnMapping,
-} from '../types/locationImport.types';
-import { attemptAutoMapping } from '../utils/autoMapping';
+  ExcelCellValue,
+} from "../types/locationImport.types";
+import { attemptAutoMapping } from "../utils/autoMapping";
 
 // Интерфейсы остаются здесь, так как они описывают параметры и результаты функций этого сервиса
 interface ReadFileAndGetHeadersParams {
@@ -20,19 +21,19 @@ interface ReadFileAndGetHeadersParams {
 
 interface ReadFileResult {
   headers: string[];
-  rawData: any[][]; // Данные УЖЕ БЕЗ заголовков
+  rawData: ExcelCellValue[][];
   initialMapping: ColumnMapping;
 }
 
 interface ProcessDataWithMappingParams {
-  rawExcelData: any[][]; // Данные без заголовков
+  rawExcelData: ExcelCellValue[][];
   excelHeaders: string[];
   columnMapping: ColumnMapping;
   selectedDataSource: LocationDataSource | null;
 }
 
-
-export const fileProcessingService = { // Переименовал workflowService в fileProcessingService для консистентности
+export const fileProcessingService = {
+  // Переименовал workflowService в fileProcessingService для консистентности
   async readFileForMapping({
     uploadedFile,
     selectedDataSource,
@@ -47,11 +48,16 @@ export const fileProcessingService = { // Переименовал workflowServi
       throw new Error("Excel file is empty or the first sheet is empty.");
     }
     const headers = allRows.length > 0 ? allRows[0].map(String) : [];
-    const rawDataWithoutHeaders = allRows.length > 1 ? allRows.slice(1) : [];
+    const rawDataWithoutHeaders =
+      allRows.length > 1 ? allRows.slice(1) : ([] as ExcelCellValue[][]);
 
     const initialMapping = attemptAutoMapping(headers, selectedDataSource); // <--- ВЫЗОВ УТИЛИТЫ
 
-    return { headers, rawData: rawDataWithoutHeaders, initialMapping };
+    return {
+      headers,
+      rawData: rawDataWithoutHeaders as ExcelCellValue[][],
+      initialMapping,
+    };
   },
 
   async processDataWithMapping({
@@ -67,7 +73,8 @@ export const fileProcessingService = { // Переименовал workflowServi
       Object.keys(columnMapping).length === 0 ||
       Object.values(columnMapping).every((value) => value === null);
 
-    if (isMappingEffectivelyEmpty) { // Проверяем только маппинг, rawExcelData проверит dataProcessor
+    if (isMappingEffectivelyEmpty) {
+      // Проверяем только маппинг, rawExcelData проверит dataProcessor
       notifications.show({
         title: "Mapping Required",
         message: "Please configure column mapping.",
@@ -75,12 +82,18 @@ export const fileProcessingService = { // Переименовал workflowServi
         icon: React.createElement(IconAlertTriangle, { size: "1.1rem" }),
         autoClose: 3000,
       });
-      throw new Error("Mapping configuration is missing/empty for processDataWithMapping.");
+      throw new Error(
+        "Mapping configuration is missing/empty for processDataWithMapping."
+      );
     }
 
     let processed: ProcessedLocationData[] = [];
     if (selectedDataSource === LocationDataSource.PROPERTY_FINDER) {
-      processed = processPropertyFinderData(rawExcelData, excelHeaders, columnMapping);
+      processed = processPropertyFinderData(
+        rawExcelData,
+        excelHeaders,
+        columnMapping
+      );
     } else if (selectedDataSource === LocationDataSource.BAYUT) {
       processed = processBayutData(rawExcelData, excelHeaders, columnMapping);
     } else {

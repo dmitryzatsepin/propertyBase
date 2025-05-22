@@ -2,8 +2,9 @@
 import {
   ProcessedLocationData,
   LocationDataSource,
-  ColumnMapping, // Импортируем ColumnMapping
-  MappableField,  // Импортируем MappableField
+  ColumnMapping,
+  MappableField,
+  ExcelCellValue,
 } from "../types/locationImport.types";
 
 /**
@@ -16,7 +17,7 @@ import {
  * @returns An array of processed location data.
  */
 export const processPropertyFinderData = (
-  rawDataWithoutHeaders: any[][],
+  rawDataWithoutHeaders: ExcelCellValue[][],
   excelHeaders: string[],
   columnMapping: ColumnMapping
 ): ProcessedLocationData[] => {
@@ -37,12 +38,12 @@ export const processPropertyFinderData = (
   };
 
   // Получаем индексы для каждого маппируемого поля
-  const cityIndex = getColumnIndex('city');
-  const communityIndex = getColumnIndex('community');
-  const subcommunityIndex = getColumnIndex('subcommunity');
-  const propertyIndex = getColumnIndex('property');
-  const locationTypeIndex = getColumnIndex('locationType'); // Если маппится
-  const sourceSpecificIdIndex = getColumnIndex('sourceSpecificId'); // Если маппится
+  const cityIndex = getColumnIndex("city");
+  const communityIndex = getColumnIndex("community");
+  const subcommunityIndex = getColumnIndex("subcommunity");
+  const propertyIndex = getColumnIndex("property");
+  const locationTypeIndex = getColumnIndex("locationType"); // Если маппится
+  const sourceSpecificIdIndex = getColumnIndex("sourceSpecificId"); // Если маппится
 
   // Итерируемся по строкам данных (которые уже без заголовков)
   for (let i = 0; i < rawDataWithoutHeaders.length; i++) {
@@ -60,17 +61,35 @@ export const processPropertyFinderData = (
 
     // Извлекаем данные, используя полученные индексы
     // Если индекс undefined (поле не смаплено или заголовок не найден), значение будет null
-    const cityFromFile = cityIndex !== undefined ? row[cityIndex]?.toString().trim() : undefined;
-      if (!cityFromFile) {
-        console.warn(`PROCESSOR_PF: Skipping Excel row #${excelRowNumberApproximation}: City is missing or empty, but it's required.`);
-        continue;
-      }
+    const cityFromFile =
+      cityIndex !== undefined ? row[cityIndex]?.toString().trim() : undefined;
+    if (!cityFromFile) {
+      console.warn(
+        `PROCESSOR_PF: Skipping Excel row #${excelRowNumberApproximation}: City is missing or empty, but it's required.`
+      );
+      continue;
+    }
     const city = cityFromFile;
-    const community = communityIndex !== undefined ? row[communityIndex]?.toString().trim() || null : null;
-    const subcommunity = subcommunityIndex !== undefined ? row[subcommunityIndex]?.toString().trim() || null : null;
-    const property = propertyIndex !== undefined ? row[propertyIndex]?.toString().trim() || null : null;
-    const locationType = locationTypeIndex !== undefined ? row[locationTypeIndex]?.toString().trim() || null : null;
-    const sourceSpecificId = sourceSpecificIdIndex !== undefined ? row[sourceSpecificIdIndex]?.toString().trim() || null : null;
+    const community =
+      communityIndex !== undefined
+        ? row[communityIndex]?.toString().trim() || null
+        : null;
+    const subcommunity =
+      subcommunityIndex !== undefined
+        ? row[subcommunityIndex]?.toString().trim() || null
+        : null;
+    const property =
+      propertyIndex !== undefined
+        ? row[propertyIndex]?.toString().trim() || null
+        : null;
+    const locationType =
+      locationTypeIndex !== undefined
+        ? row[locationTypeIndex]?.toString().trim() || null
+        : null;
+    const sourceSpecificId =
+      sourceSpecificIdIndex !== undefined
+        ? row[sourceSpecificIdIndex]?.toString().trim() || null
+        : null;
 
     // Формирование locationPath
     const pathSegments: string[] = [
@@ -78,11 +97,23 @@ export const processPropertyFinderData = (
       community,
       subcommunity,
       property,
-    ].filter((segment): segment is string => segment !== null && segment !== "");
+    ].filter(
+      (segment): segment is string => segment !== null && segment !== ""
+    );
     const locationPath = pathSegments.join(">");
 
     // Добавляем, только если locationPath не пустой (или измени это правило, если нужно)
-    if (locationPath || Object.values({city, community, subcommunity, property, locationType, sourceSpecificId}).some(val => val !== null)) {
+    if (
+      locationPath ||
+      Object.values({
+        city,
+        community,
+        subcommunity,
+        property,
+        locationType,
+        sourceSpecificId,
+      }).some((val) => val !== null)
+    ) {
       processedList.push({
         id: null,
         locationPath: locationPath,
@@ -95,7 +126,9 @@ export const processPropertyFinderData = (
         sourceSpecificId: sourceSpecificId,
       });
     } else {
-      console.warn(`PROCESSOR_PF: Skipping data row index ${i} (Excel approx row #${excelRowNumberApproximation}): All relevant mapped fields are empty, resulting in an empty locationPath.`);
+      console.warn(
+        `PROCESSOR_PF: Skipping data row index ${i} (Excel approx row #${excelRowNumberApproximation}): All relevant mapped fields are empty, resulting in an empty locationPath.`
+      );
     }
   }
 

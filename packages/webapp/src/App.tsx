@@ -2,7 +2,7 @@
 import { MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
 import { BrowserRouter, Routes, Route } from "react-router-dom"; // Добавил Navigate
-import { AppLayout } from "./components/Layout/AppLayout"; // Наш основной Layout
+import { AppLayout } from "./components/Layout/AppLayout/AppLayout"; // Наш основной Layout
 import { LocationImport } from "./features/LocationImport/LocationImport"; // Страница импорта Excel
 
 // Заглушки для других страниц (создай простые компоненты для них)
