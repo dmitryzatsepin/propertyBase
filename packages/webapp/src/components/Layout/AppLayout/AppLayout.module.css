@@ -29,7 +29,6 @@
 
 .linksInner {
   padding: var(--mantine-spacing-md) var(--mantine-spacing-md);
-  overflow-y: auto;
 }
 
 .footer {

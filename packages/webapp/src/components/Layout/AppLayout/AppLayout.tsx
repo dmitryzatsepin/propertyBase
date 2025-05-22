@@ -1,5 +1,13 @@
 // packages/webapp/src/components/Layout/AppLayout.tsx
-import { ScrollArea, Group, Box, Code, Text, TextInput } from "@mantine/core";
+import {
+  ScrollArea,
+  Group,
+  Stack,
+  Box,
+  Code,
+  Text,
+  TextInput,
+} from "@mantine/core";
 import { IconSearch } from "@tabler/icons-react";
 import { Outlet } from "react-router-dom";
 import {
@@ -39,7 +47,9 @@ export function AppLayout() {
         </div>
 
         <ScrollArea className={classes.links}>
-          <div className={classes.linksInner}>{links}</div>
+          <Stack gap="md" className={classes.linksInner}>
+            {links}
+          </Stack>
         </ScrollArea>
 
         <div className={classes.footer}>
