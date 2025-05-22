@@ -1,5 +1,5 @@
 // packages/webapp/src/components/Layout/NavbarLinksGroup/NavbarLinksGroup.tsx
-import React, { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import {
   Group,
   Box,
@@ -21,7 +21,7 @@ export function LinksGroup({
   label,
   initiallyOpened,
   links,
-  link: groupLinkPath, // Это путь, если сама группа является ссылкой (например, Dashboard)
+  link: groupLinkPath,
 }: LinksGroupProps) {
   const location = useLocation();
   const hasLinks = Array.isArray(links) && links.length > 0;
@@ -44,7 +44,33 @@ export function LinksGroup({
   }, [groupLinkPath, links, hasLinks, isPathExactlyActive]);
 
   // Состояние opened для раскрытия группы
-  const [opened, setOpened] = useState(initiallyOpened || false);
+  const [opened, setOpened] = useState(
+    initiallyOpened || isGroupOrAnySublinkActive()
+  );
+  const prevPathnameRef = useRef(location.pathname);
+
+  useEffect(() => {
+    const currentPathname = location.pathname;
+    const groupIsNowActive = isGroupOrAnySublinkActive();
+
+    // Если initiallyOpened явно управляет состоянием
+    if (typeof initiallyOpened === "boolean") {
+      if (opened !== initiallyOpened) {
+        // Синхронизируемся с initiallyOpened, если он изменился
+        setOpened(initiallyOpened);
+      }
+    }
+    // Если путь изменился и группа стала активной (а до этого не была или была закрыта)
+    // И это не просто обновление opened из-за клика
+    else if (
+      currentPathname !== prevPathnameRef.current &&
+      groupIsNowActive &&
+      !opened
+    ) {
+      setOpened(true);
+    }
+    prevPathnameRef.current = currentPathname;
+  }, [location.pathname, initiallyOpened, isGroupOrAnySublinkActive, opened]);
 
   // Эффект для раскрытия группы, если она становится активной (например, при прямой навигации)
   useEffect(() => {
@@ -95,7 +121,7 @@ export function LinksGroup({
         <Group justify="space-between" gap={0} wrap="nowrap">
           <Box style={{ display: "flex", alignItems: "center" }}>
             <ThemeIcon
-              variant={controlIsActiveForStyling ? "filled" : "light"}
+              variant={controlIsActiveForStyling ? "outline" : "light"}
               size={30}
             >
               <Icon size="1.1rem" stroke={1.5} />
@@ -115,11 +141,11 @@ export function LinksGroup({
         className={classes.control}
         data-active={controlIsActiveForStyling || undefined} // Подсветка группы, если она или ее дети активны
       >
-        <Group justify="space-between" gap={0} wrap="nowrap">
+        <Group justify="space-between" gap={1} wrap="nowrap">
           <Box style={{ display: "flex", alignItems: "center" }}>
             {/* Для ThemeIcon основной группы: если хочешь другой стиль, когда активна только под-ссылка, а не сама группа */}
             <ThemeIcon
-              variant={controlIsActiveForStyling ? "filled" : "light"}
+              variant={controlIsActiveForStyling ? "outline" : "light"}
               size={30}
             >
               <Icon size="1.1rem" stroke={1.5} />
@@ -138,10 +164,8 @@ export function LinksGroup({
       </UnstyledButton>
       {hasLinks ? (
         <Collapse in={opened}>
-          {/* Можно обернуть items в Stack для отступов между под-ссылками */}
-          <Stack gap={0} className={classes.subLinksContainer}>
+          <Stack gap={1} className={classes.subLinksContainer}>
             {" "}
-            {/* Используем класс для отступа линии и самих ссылок */}
             {items}
           </Stack>
         </Collapse>
