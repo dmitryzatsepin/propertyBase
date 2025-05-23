@@ -2,7 +2,7 @@
 import express, { Application, Request, Response, NextFunction } from "express";
 import cors from "cors";
 import * as trpcExpress from "@trpc/server/adapters/express";
-import { appRouter } from "./core/trpc/root";
+import { appRouter } from "./core/trpc/_app";
 // import locationRoutes from "./api/routes/location.routes"; // Закомментировано
 import { createTRPCContext } from "./core/trpc/trpc";
 

@@ -1,32 +1,24 @@
 // packages/backend/src/core/trpc/helpers/property.helpers.ts
 import { Prisma } from "@prisma/client";
 import { z } from "zod";
-import { propertyCreateSchema } from "../schemas/property.schemas"; // Импортируем нашу схему
+import {
+  propertyCreateSchema,
+  propertyUpdateSchema, // Убедитесь, что этот экспорт есть и схема propertyUpdateSchema верна
+} from "../schemas/property.schemas";
 
-// Тип для входных данных, выведенный из Zod-схемы
 type PropertyCreateInputType = z.infer<typeof propertyCreateSchema>;
+type PropertyUpdateZodInputType = z.infer<typeof propertyUpdateSchema>; // Переименовал для ясности
 
 export function preparePropertyCreateData(
   input: PropertyCreateInputType
 ): Prisma.PropertyUncheckedCreateInput {
-  // Prisma Client достаточно умен, чтобы обработать `undefined` для опциональных полей,
-  // пропуская их. Явное присвоение `?? null` или `?? []` нужно только там,
-  // где вы хотите гарантировать определенное значение по умолчанию, если input его не содержит,
-  // или если тип в Prisma (например, массив) не может быть `undefined` при создании.
-
   const data: Prisma.PropertyUncheckedCreateInput = {
     propertyRefNo: input.propertyRefNo,
     propertyTitle: input.propertyTitle,
     agentId: input.agentId,
-    locationId: input.locationId,
+    locationId: input.locationId, // Для create мы передаем ID напрямую
 
-    // Опциональные поля - если input.fieldName === undefined, Prisma их проигнорирует,
-    // если поле в БД nullable. Если поле в БД НЕ nullable и нет default, будет ошибка.
-    // Поэтому, если поле в Zod .optional(), а в Prisma не nullable и без default,
-    // здесь нужно присвоить значение по умолчанию.
-    // Предполагаем, что все поля ниже в Prisma nullable (String?, Int?, Boolean?, DateTime?)
-    // или имеют default значения, или Zod-схема соответствует обязательности Prisma.
-
+    // Опциональные поля (если в Zod .optional() или .nullable().optional())
     propertyTitleAR: input.propertyTitleAR ?? null,
     propertyDescription: input.propertyDescription ?? null,
     propertyDescriptionAR: input.propertyDescriptionAR ?? null,
@@ -52,11 +44,12 @@ export function preparePropertyCreateData(
     stories: input.stories,
     titleDeedNumberYear: input.titleDeedNumberYear ?? null,
     videoTourUrl: input.videoTourUrl ?? null,
-    videosUrl: input.videosUrl ?? [], // Для String[] в Prisma, если input.videosUrl undefined, будет []
+    videosUrl: input.videosUrl ?? [],
     view360Url: input.view360Url ?? null,
     developerBitrixId: input.developerBitrixId ?? null,
     sellerLandlordPABitrixIds: input.sellerLandlordPABitrixIds ?? null,
 
+    // Для create мы также передаем ID напрямую для связей, если они есть
     propertyTypeId: input.propertyTypeId ?? null,
     propertyStatusId: input.propertyStatusId ?? null,
     offeringTypeId: input.offeringTypeId ?? null,
@@ -65,20 +58,86 @@ export function preparePropertyCreateData(
     ownershipTypeId: input.ownershipTypeId ?? null,
     propertyPurposeId: input.propertyPurposeId ?? null,
     rentFrequencyId: input.rentFrequencyId ?? null,
-
-    // Связи M-M будут добавляться здесь позже, например:
-    // portals: input.portalIds ? { connect: input.portalIds.map(id => ({ id })) } : undefined,
   };
-
-  // Удаляем ключи со значением undefined, чтобы Prisma их точно проигнорировала, если они опциональны
-  // Хотя Prisma Client обычно справляется с этим, это дополнительная мера.
-  // (Object.keys(data) as Array<keyof typeof data>).forEach(key => {
-  //   if (data[key] === undefined) {
-  //     delete data[key];
-  //   }
-  // });
-
   return data;
 }
 
-// TODO: Создать аналогичную функцию preparePropertyUpdateData, когда будете делать update
+export function preparePropertyUpdateData(
+  // input здесь уже не содержит 'id', так как мы его отделили в propertyRouter
+  input: Omit<PropertyUpdateZodInputType, "id">
+): Prisma.PropertyUpdateInput {
+  // Деструктурируем все поля из input
+  const {
+    // Поля-связи (ID)
+    locationId,
+    propertyTypeId,
+    propertyStatusId,
+    offeringTypeId,
+    completionStatusId,
+    furnishedStatusId,
+    ownershipTypeId,
+    propertyPurposeId,
+    rentFrequencyId,
+    // Поля для M-M (когда будут)
+    // portalIds,
+    // commercialAmenityIds,
+    // privateAmenityIds,
+
+    // Остальные поля (скалярные или массивы скаляров)
+    ...scalarAndArrayData
+  } = input;
+
+  // Prisma.PropertyUpdateInput - это то, что ожидает prisma.property.update({ data: ... })
+  const dataToUpdate: Prisma.PropertyUpdateInput = {
+    ...scalarAndArrayData, // Сначала присваиваем все скалярные поля и массивы (как videosUrl)
+    // `propertyRefNo` здесь не будет, если он был в .omit() схемы propertyUpdateSchema
+  };
+
+  // Теперь обрабатываем поля-связи (ForeignKey)
+  // Если ID связи пришел (не undefined), то формируем объект connect/disconnect
+  if (locationId !== undefined && locationId !== null) {
+    dataToUpdate.location = { connect: { id: locationId } };
+  }
+  if (propertyTypeId !== undefined) {
+    dataToUpdate.propertyType = propertyTypeId
+      ? { connect: { id: propertyTypeId } }
+      : { disconnect: true };
+  }
+  if (propertyStatusId !== undefined) {
+    dataToUpdate.propertyStatus = propertyStatusId
+      ? { connect: { id: propertyStatusId } }
+      : { disconnect: true };
+  }
+  if (offeringTypeId !== undefined) {
+    dataToUpdate.offeringType = offeringTypeId
+      ? { connect: { id: offeringTypeId } }
+      : { disconnect: true };
+  }
+  if (completionStatusId !== undefined) {
+    dataToUpdate.completionStatus = completionStatusId
+      ? { connect: { id: completionStatusId } }
+      : { disconnect: true };
+  }
+  if (furnishedStatusId !== undefined) {
+    dataToUpdate.furnishedStatus = furnishedStatusId
+      ? { connect: { id: furnishedStatusId } }
+      : { disconnect: true };
+  }
+  if (ownershipTypeId !== undefined) {
+    dataToUpdate.ownershipType = ownershipTypeId
+      ? { connect: { id: ownershipTypeId } }
+      : { disconnect: true };
+  }
+  if (propertyPurposeId !== undefined) {
+    dataToUpdate.propertyPurpose = propertyPurposeId
+      ? { connect: { id: propertyPurposeId } }
+      : { disconnect: true };
+  }
+  if (rentFrequencyId !== undefined) {
+    dataToUpdate.rentFrequency = rentFrequencyId
+      ? { connect: { id: rentFrequencyId } }
+      : { disconnect: true };
+  }
+
+  return dataToUpdate;
+}

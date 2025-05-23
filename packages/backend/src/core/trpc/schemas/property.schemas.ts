@@ -6,7 +6,6 @@ import { z } from "zod";
 const propertyBaseSchema = z.object({
   propertyRefNo: z.string().min(1, "Property Ref No. is required"),
   propertyTitle: z.string().min(1, "Property Title is required"),
-
   propertyTitleAR: z.string().optional(),
   propertyDescription: z.string().optional(),
   propertyDescriptionAR: z.string().optional(),
@@ -37,7 +36,6 @@ const propertyBaseSchema = z.object({
   developerBitrixId: z.string().optional(),
   sellerLandlordPABitrixIds: z.string().optional(),
 
-  // ID для связей со справочниками
   propertyTypeId: z.string().cuid().optional(),
   propertyStatusId: z.string().cuid().optional(),
   offeringTypeId: z.string().cuid().optional(),
@@ -46,23 +44,18 @@ const propertyBaseSchema = z.object({
   ownershipTypeId: z.string().cuid().optional(),
   propertyPurposeId: z.string().cuid().optional(),
   rentFrequencyId: z.string().cuid().optional(),
-
-  // TODO: Добавить сюда поля для связей M-M, когда они появятся
-  // portalIds: z.array(z.string().cuid()).optional(),
-  // commercialAmenityIds: z.array(z.string().cuid()).optional(),
-  // privateAmenityIds: z.array(z.string().cuid()).optional(),
 });
 
 // Схема для создания Property (обязательные поля + базовые)
 export const propertyCreateSchema = propertyBaseSchema.extend({
   agentId: z.string().cuid("Invalid Agent ID format"),
   locationId: z.string().cuid("Invalid Location ID format"),
-  // propertyRefNo и propertyTitle уже обязательны в propertyBaseSchema
 });
 
-// Схема для обновления Property (все поля опциональны, кроме ID)
+// Схема для обновления Property
 export const propertyUpdateSchema = propertyBaseSchema.partial().extend({
   id: z.string().cuid("Property ID is required for update"),
+  locationId: z.string().cuid("Invalid Location ID format").optional(),
 });
 
 // Схема для получения списка
@@ -70,7 +63,6 @@ export const propertyListSchema = z
   .object({
     limit: z.number().min(1).max(100).nullish(),
     cursor: z.string().cuid().nullish(),
-    // TODO: Добавить сюда поля для фильтрации, если необходимо
   })
   .optional();
 
