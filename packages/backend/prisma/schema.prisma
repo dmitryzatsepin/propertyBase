@@ -1,8 +1,8 @@
 // prisma/schema.prisma
 
 generator client {
-  provider        = "prisma-client-js"
-  //output   = "../node_modules/.prisma/client"
+  provider = "prisma-client-js"
+  // output   = "../node_modules/.prisma/client"
 }
 
 datasource db {
@@ -16,7 +16,7 @@ enum LocationDataSource {
 }
 
 model Location {
-  id             String  @id @default(cuid())
+  id             String   @id @default(cuid())
   locationPath   String
   city           String
   community      String?
@@ -28,6 +28,8 @@ model Location {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
+  properties     Property[]
+
   @@unique([locationPath, source], name: "unique_location_path_per_source")
   @@index([locationPath])
   @@index([city])
@@ -35,4 +37,262 @@ model Location {
   @@index([source])
   @@index([locationType])
   @@map("locations")
+}
+
+
+model User {
+  id        String     @id @default(cuid())
+  email     String     @unique
+  name      String?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  properties Property[] @relation("AgentProperties")
+
+  @@map("users")
+}
+
+model Property {
+  id                                 String    @id @default(cuid())
+  propertyRefNo                      String    @unique
+  propertyTitle                      String 
+  propertyTitleAR                    String?
+  propertyDescription                String?
+  propertyDescriptionAR              String?
+  unitNumber                         String?
+  externalPropertyId                 String?
+  availabilityDate                   DateTime?
+  buildYear                          Int?
+  dtcmPermit                         String?
+  floor                              Int?
+  geopointLatitude                   Decimal?
+  geopointLongitude                  Decimal?
+  numberOfBathrooms                  String?
+  numberOfBedrooms                   String?
+  numberOfCheques                    String?
+  offPlan                            Boolean?
+  parking                            Int?
+  permitNumber                       String?
+  plotSize                           Decimal?
+  price                              Decimal?
+  priceOnApplication                 Boolean?
+  serviceChargeAEDPerSQFT            Decimal?
+  sizeSqft                           Decimal?
+  stories                            Int?
+  titleDeedNumberYear                String?
+  videoTourUrl                       String?
+  videosUrl                          String[]
+  view360Url                         String?
+
+  // Связи с другими моделями
+  agentId                            String    // FK к User
+  agent                              User      @relation("AgentProperties", fields: [agentId], references: [id])
+
+  locationId                         String    // FK к Location
+  location                           Location  @relation(fields: [locationId], references: [id])
+
+  propertyTypeId                     String?   // FK к PropertyType
+  propertyType                       PropertyType? @relation(fields: [propertyTypeId], references: [id])
+
+  propertyStatusId                   String?   // FK к PropertyStatus
+  propertyStatus                     PropertyStatus? @relation(fields: [propertyStatusId], references: [id])
+
+  offeringTypeId                     String?   // FK к OfferingType
+  offeringType                       OfferingType? @relation(fields: [offeringTypeId], references: [id])
+
+  completionStatusId                 String?   // FK к CompletionStatus
+  completionStatus                   CompletionStatus? @relation(fields: [completionStatusId], references: [id])
+
+  furnishedStatusId                  String?   // FK к FurnishingStatus
+  furnishedStatus                    FurnishingStatus? @relation(fields: [furnishedStatusId], references: [id])
+
+  ownershipTypeId                    String?   // FK к OwnershipType
+  ownershipType                      OwnershipType? @relation(fields: [ownershipTypeId], references: [id])
+
+  propertyPurposeId                  String?   // FK к PropertyPurpose
+  propertyPurpose                    PropertyPurpose? @relation(fields: [propertyPurposeId], references: [id])
+
+  rentFrequencyId                    String?   // FK к RentFrequency
+  rentFrequency                      RentFrequency? @relation(fields: [rentFrequencyId], references: [id])
+
+  // Поля для Bitrix24 ID
+  developerBitrixId                  String?   // Developer (Link to Bitrix24 Element)
+  sellerLandlordPABitrixIds          String?  // Seller / Landlord / PA (Link to Bitrix24 Element)
+
+  // Отношения один-ко-многим для файлов
+  images                             PropertyImage[]
+  propertyDocuments                  PropertyDocument[]
+  floorPlans                         PropertyFloorPlan[]
+
+  // Отношения многие-ко-многим
+  portals                            Portal[]   @relation("PropertyPortals")
+  commercialAmenities                Amenity[]  @relation("CommercialAmenities")
+  privateAmenities                   Amenity[]  @relation("PrivateAmenities")
+
+  createdAt                          DateTime   @default(now())
+  updatedAt                          DateTime   @updatedAt
+
+  @@index([agentId])
+  @@index([locationId])
+  @@index([propertyTypeId])
+  @@index([propertyStatusId])
+  @@index([price])
+  @@map("properties")
+}
+
+// --- Справочники (Dictionary Models) ---
+
+model PropertyType {
+  id          String     @id @default(cuid())
+  name        String     @unique // e.g., "Apartment", "Villa", "Office", "Land"
+  description String?
+  properties  Property[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  @@map("property_types")
+}
+
+model PropertyStatus {
+  id          String     @id @default(cuid())
+  name        String     @unique // e.g., "Available", "Sold", "Rented", "Under Offer"
+  description String?
+  properties  Property[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  @@map("property_statuses")
+}
+
+model OfferingType {
+  id          String     @id @default(cuid())
+  name        String     @unique // e.g., "Sale", "Rent", "Sale or Rent"
+  description String?
+  properties  Property[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  @@map("offering_types")
+}
+
+model CompletionStatus {
+  id          String     @id @default(cuid())
+  name        String     @unique // e.g., "Ready", "Off-plan", "Under Construction"
+  description String?
+  properties  Property[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  @@map("completion_statuses")
+}
+
+model FurnishingStatus {
+  id          String     @id @default(cuid())
+  name        String     @unique // e.g., "Furnished", "Unfurnished", "Partially Furnished"
+  description String?
+  properties  Property[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  @@map("furnishing_statuses")
+}
+
+model OwnershipType {
+  id          String     @id @default(cuid())
+  name        String     @unique // e.g., "Freehold", "Leasehold"
+  description String?
+  properties  Property[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  @@map("ownership_types")
+}
+
+model PropertyPurpose {
+  id          String     @id @default(cuid())
+  name        String     @unique // e.g., "Residential", "Commercial", "Investment"
+  description String?
+  properties  Property[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  @@map("property_purposes")
+}
+
+model RentFrequency {
+  id          String     @id @default(cuid())
+  name        String     @unique // e.g., "Yearly", "Monthly", "Weekly", "Daily"
+  description String?
+  properties  Property[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  @@map("rent_frequencies")
+}
+
+// --- Модели для файлов (1-M с Property) ---
+
+model PropertyImage {
+  id         String   @id @default(cuid())
+  url        String   // URL или путь к файлу
+  altText    String?
+  order      Int?     // Для сортировки изображений
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade) // Cascade удаление при удалении Property
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([propertyId])
+  @@map("property_images")
+}
+
+model PropertyDocument {
+  id         String   @id @default(cuid())
+  url        String   // URL или путь к файлу
+  fileName   String?  // Отображаемое имя файла
+  fileType   String?  // e.g., "PDF", "DOCX", "Title Deed"
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([propertyId])
+  @@map("property_documents")
+}
+
+model PropertyFloorPlan {
+  id          String   @id @default(cuid())
+  url         String   // URL или путь к файлу
+  title       String?
+  description String?
+  order       Int?
+  propertyId  String
+  property    Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([propertyId])
+  @@map("property_floor_plans")
+}
+
+// --- Модели для M-M отношений ---
+
+model Amenity {
+  id        String   @id @default(cuid())
+  name      String   @unique // e.g., "Swimming Pool", "Gym", "Covered Parking"
+  // category AmenityCategory? // Можно добавить enum AmenityCategory { COMMERCIAL, PRIVATE, GENERAL } если нужна явная типизация
+  description String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Связи для M-M с Property (неявные соединительные таблицы)
+  propertiesCommercial Property[] @relation("CommercialAmenities")
+  propertiesPrivate    Property[] @relation("PrivateAmenities")
+
+  @@map("amenities")
+}
+
+model Portal {
+  id          String     @id @default(cuid())
+  name        String     @unique // e.g., "PropertyFinder", "Bayut", "Dubizzle"
+  websiteUrl  String?
+  description String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  properties Property[] @relation("PropertyPortals") // Связь M-M с Property
+
+  @@map("portals")
 }
