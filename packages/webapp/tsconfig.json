@@ -6,13 +6,15 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "@propertybase/shared/*": ["../shared/src/*"],
-      "@propertybase/shared/types": ["../shared/types"]
+      "@propertybase/backend/*": ["../backend/src/*"]
     },
     "traceResolution": true,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler"
   },
-  "include": ["src", "vite.config.ts"],
-  "references": [
-    // { "path": "../shared" }
-  ]
+  "references": [{ "path": "../backend" }],
+  "include": ["src", "vite.config.ts", ".eslintrc.cjs"]
 }
