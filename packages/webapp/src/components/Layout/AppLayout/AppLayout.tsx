@@ -1,4 +1,5 @@
 // packages/webapp/src/components/Layout/AppLayout.tsx
+import React from "react";
 import {
   ScrollArea,
   Group,
@@ -9,7 +10,6 @@ import {
   TextInput,
 } from "@mantine/core";
 import { IconSearch } from "@tabler/icons-react";
-import { Outlet } from "react-router-dom";
 import {
   getFilteredNavigationData,
   NavGroupData,
@@ -19,8 +19,8 @@ import { UserButton } from "../UserButton/UserButton";
 // import { Logo } from './Logo';
 import classes from "./AppLayout.module.css";
 
-export function AppLayout() {
-  const isAdmin = true;
+export const AppLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
+  const isAdmin = true; // TODO: Заменить на реальную логику определения админа
   const visibleNavigationData = getFilteredNavigationData(isAdmin);
 
   const links = visibleNavigationData.map((item: NavGroupData) => (
@@ -32,7 +32,6 @@ export function AppLayout() {
       <nav className={classes.navbar}>
         <div className={classes.header}>
           <Group justify="space-between">
-            {/* <Logo style={{ width: 120 }} />*/}
             <Text size="xl" fw={700}>
               Property Base
             </Text>
@@ -56,9 +55,8 @@ export function AppLayout() {
           <UserButton />
         </div>
       </nav>
-      <main className={classes.pageContent}>
-        <Outlet />
-      </main>
+      {/* Теперь children (который будет Outlet из роутера) рендерится здесь */}
+      <main className={classes.pageContent}>{children}</main>
     </Box>
   );
-}
+};

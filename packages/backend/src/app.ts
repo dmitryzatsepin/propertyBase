@@ -5,10 +5,25 @@ import * as trpcExpress from "@trpc/server/adapters/express";
 import { appRouter } from "./core/trpc/_app";
 // import locationRoutes from "./api/routes/location.routes"; // Закомментировано
 import { createTRPCContext } from "./core/trpc/trpc";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const app: Application = express();
 
-app.use(cors({ origin: process.env.FRONTEND_URL || "http://localhost:3000" }));
+const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
+console.log("--- Configuring CORS for origin:", frontendUrl, "---");
+
+app.use(
+  cors({
+    origin: frontendUrl,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"], // Явно перечислим методы
+    allowedHeaders: ["Content-Type", "Authorization"], // Явно перечислим заголовки
+    credentials: true,
+    optionsSuccessStatus: 204,
+  })
+);
+
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
@@ -16,16 +31,14 @@ app.use(
   "/trpc",
   trpcExpress.createExpressMiddleware({
     router: appRouter,
-    createContext: createTRPCContext, // Используем простой createContext из trpc.ts
+    createContext: createTRPCContext,
     onError: (opts) => {
-      // Логгер ошибок tRPC, если нужен
       const { error, req } = opts;
       console.error("tRPC Error:", error);
       if (error.code === "INTERNAL_SERVER_ERROR") {
         console.error("Unhandled error on tRPC:", error);
       }
       if (req) {
-        // console.log('tRPC onError req.body:', (req as any).body); // Можно закомментировать, если не нужен
       }
     },
   })
