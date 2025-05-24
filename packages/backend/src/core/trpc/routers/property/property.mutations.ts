@@ -2,11 +2,11 @@ import { publicProcedure } from "../../trpc";
 import {
   propertyCreateSchema,
   propertyUpdateSchema,
-} from "../../schemas/property.schemas";
+} from "../../schemas/property";
 import {
   preparePropertyCreateData,
   preparePropertyUpdateData,
-} from "../../helpers/property.helpers";
+} from "../../helpers/property";
 import prisma from "../../../../core/utils/prismaClient";
 import { Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
