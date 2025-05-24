@@ -2,6 +2,7 @@
 import { Routes, Route, Outlet } from "react-router-dom";
 import { AppLayout } from "../components/Layout/AppLayout/AppLayout";
 import PropertiesPage from "../pages/PropertiesPage"; // Наша новая страница
+import PropertyDetailsPage from "../pages/PropertyDetailsPage";
 import { LocationImport } from "../features/LocationImport"; // Твоя фича импорта локаций
 
 // Заглушки для страниц, чтобы можно было создать структуру роутов
@@ -31,8 +32,11 @@ export const AppRoutes = () => {
         <Route path="locations/import" element={<LocationImport />} />
         <Route path="locations/manage" element={<ManageLocationsPage />} />{" "}
         {/* Изменил с locations на locations/manage */}
-        <Route path="properties" element={<PropertiesPage />} />{" "}
-        {/* Наша новая страница для списка */}
+        <Route path="properties" element={<PropertiesPage />} />
+        <Route
+          path="properties/:propertyId"
+          element={<PropertyDetailsPage />}
+        />
         {/* Закомментируем старую ManagePropertiesPage, если PropertiesPage ее заменяет для списка */}
         {/* <Route path="properties/manage" element={<ManagePropertiesPage />} />  */}
         {/* <Route path="settings/account" element={<AccountSettingsPage />} /> */}
