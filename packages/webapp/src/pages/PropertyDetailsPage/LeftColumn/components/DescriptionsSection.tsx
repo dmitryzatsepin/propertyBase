@@ -2,12 +2,12 @@
 import React from "react";
 import { Title, Text } from "@mantine/core";
 import { IconFileDescription } from "@tabler/icons-react";
-import { DetailItem } from "./DetailItem";
-import { PropertySectionProps } from "./types";
+import { DetailItem } from "../../components/DetailItem";
+import { PropertySectionProps } from "../../components/types";
+import { displayValue } from "../../../../utils/displayFormatters";
 
 export const DescriptionsSection: React.FC<PropertySectionProps> = ({
   property,
-  displayValue,
 }) => {
   if (!property.propertyDescription && !property.propertyDescriptionAR) {
     return null; // Не рендерим секцию, если нет описаний

@@ -6,7 +6,7 @@ import "./index.css";
 
 import { MantineProvider } from "@mantine/core";
 import "@mantine/core/styles.css"; // Стили Mantine
-// Другие стили Mantine, если используешь (Dropzone, Notifications и т.д.)
+import "@mantine/carousel/styles.css";
 import "@mantine/notifications/styles.css";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";

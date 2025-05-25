@@ -7,12 +7,11 @@ import {
   IconKey,
   IconReceipt,
 } from "@tabler/icons-react";
-import { DetailItem } from "./DetailItem";
-import { PropertySectionProps } from "./types";
+import { DetailItem, PropertySectionProps } from "../../components";
+import { displayValue } from "../../../../utils/displayFormatters";
 
 export const AdditionalDetailsSection: React.FC<PropertySectionProps> = ({
   property,
-  displayValue,
 }) => {
   // Можно добавить проверку, есть ли хоть одно значение в этой секции, чтобы не рендерить пустую
   return (

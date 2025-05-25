@@ -1,16 +1,10 @@
 // packages/webapp/src/pages/PropertyDetailsPage/components/types.ts
-
 export type PropertyPortal = {
   id: string;
   name: string;
   websiteUrl?: string | null;
 };
-
-export type PropertyAmenity = {
-  id: string;
-  name: string;
-};
-
+export type PropertyAmenity = { id: string; name: string };
 export type PropertyLocation = {
   id: string;
   locationPath: string;
@@ -18,19 +12,13 @@ export type PropertyLocation = {
   community?: string | null;
   subcommunity?: string | null;
   property?: string | null;
-  createdAt: string; // <--- СТРОКА
-  updatedAt: string; // <--- СТРОКА
+  createdAt: string;
+  updatedAt: string;
   locationType?: string | null;
   source: "PROPERTY_FINDER" | "BAYUT";
   sourceSpecificId?: string | null;
 };
-
-export type PropertyAgent = {
-  id: string;
-  name?: string | null;
-  email: string;
-};
-
+export type PropertyAgent = { id: string; name?: string | null; email: string };
 export type DictionaryModel = {
   id: string;
   name: string;
@@ -46,7 +34,7 @@ export type PropertyWithDetails = {
   propertyDescriptionAR?: string | null;
   unitNumber?: string | null;
   externalPropertyId?: string | null;
-  availabilityDate?: string | null; // <--- СТРОКА
+  availabilityDate?: string | null;
   buildYear?: number | null;
   dtcmPermit?: string | null;
   floor?: number | null;
@@ -70,12 +58,10 @@ export type PropertyWithDetails = {
   view360Url?: string | null;
   developerBitrixId?: string | null;
   sellerLandlordPABitrixIds?: string | null;
-  createdAt: string; // <--- СТРОКА
-  updatedAt: string; // <--- СТРОКА
-
+  createdAt: string;
+  updatedAt: string;
   location: PropertyLocation | null;
   agent: PropertyAgent | null;
-
   propertyType: DictionaryModel;
   propertyStatus: DictionaryModel;
   offeringType: DictionaryModel;
@@ -84,11 +70,9 @@ export type PropertyWithDetails = {
   ownershipType: DictionaryModel;
   propertyPurpose: DictionaryModel;
   rentFrequency: DictionaryModel;
-
   portals: PropertyPortal[];
   commercialAmenities: PropertyAmenity[];
   privateAmenities: PropertyAmenity[];
-
   images: Array<{
     id: string;
     url: string;
@@ -111,10 +95,10 @@ export type PropertyWithDetails = {
 
 export interface PropertySectionProps {
   property: PropertyWithDetails;
-  displayValue: (
-    value: string | number | boolean | Date | null | undefined,
-    suffix?: string,
-    trueVal?: string,
-    falseVal?: string
-  ) => string | React.ReactNode;
+}
+
+export interface GalleryImage {
+  id: string;
+  url: string;
+  alt: string;
 }

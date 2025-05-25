@@ -2,8 +2,11 @@
 import React from "react";
 import { Title, Group, Badge, Stack, Box } from "@mantine/core";
 import { IconWorld, IconTools, IconShieldLock } from "@tabler/icons-react";
-import { PropertySectionProps } from "./types";
-import { PropertyPortal, PropertyAmenity } from "./types";
+import {
+  PropertySectionProps,
+  PropertyPortal,
+  PropertyAmenity,
+} from "../../components/types";
 
 export const RelationsSection: React.FC<PropertySectionProps> = ({
   property,

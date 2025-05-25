@@ -12,7 +12,6 @@ import {
 import { IconAlertCircle } from "@tabler/icons-react";
 import { Link } from "react-router-dom"; // Для ссылок на детальную страницу (в будущем)
 import { trpc } from "../../utils/trpc"; // Убедись, что путь верный
-
 const PropertiesPage: React.FC = () => {
   const {
     data,
@@ -22,19 +21,14 @@ const PropertiesPage: React.FC = () => {
     hasNextPage,
     isFetchingNextPage,
   } = trpc.property.list.useInfiniteQuery(
-    // Используем useInfiniteQuery для пагинации
     {
-      limit: 10, // Количество элементов на странице
+      limit: 10,
     },
     {
-      getNextPageParam: (lastPage) => lastPage.nextCursor, // Функция для получения следующего курсора
-      // initialCursor: undefined, // Начальный курсор (необязательно, если начинаем с первой страницы)
-      // refetchOnWindowFocus: false, // По желанию
+      getNextPageParam: (lastPage) => lastPage.nextCursor,
     }
   );
-
   if (isLoading && !data) {
-    // Показываем лоадер только при первой загрузке
     return (
       <Container
         fluid
@@ -49,7 +43,6 @@ const PropertiesPage: React.FC = () => {
       </Container>
     );
   }
-
   if (error) {
     return (
       <Container fluid>
@@ -63,14 +56,10 @@ const PropertiesPage: React.FC = () => {
       </Container>
     );
   }
-
-  // Объединяем все загруженные страницы в один массив
   const allProperties = data?.pages.flatMap((page) => page.items) ?? [];
-
   const rows = allProperties.map((property) => (
     <Table.Tr key={property.id}>
       <Table.Td>
-        {/* В будущем это может быть ссылка на страницу property/{property.id} */}
         <Anchor component={Link} to={`/properties/${property.id}`} size="sm">
           {property.propertyTitle}
         </Anchor>
@@ -83,8 +72,7 @@ const PropertiesPage: React.FC = () => {
         {property.price
           ? parseFloat(property.price.toString()).toLocaleString()
           : "-"}
-      </Table.Td>{" "}
-      {/* Пример форматирования цены */}
+      </Table.Td>
     </Table.Tr>
   ));
 

@@ -1,56 +1,29 @@
 // packages/webapp/src/pages/PropertyDetailsPage/PropertyDetailsPage.tsx
-import React from "react";
+import React, { useState } from "react";
 import { useParams, Link as RouterLink } from "react-router-dom";
 import {
   Container,
-  Title,
+  Text,
   Loader,
   Alert,
-  Paper,
-  Divider,
-  Button,
-  Stack,
   Group,
-  Text,
-} from "@mantine/core"; // Добавил Group
+  Button,
+  Grid,
+} from "@mantine/core";
 import { IconAlertCircle, IconArrowLeft, IconEdit } from "@tabler/icons-react";
 import { trpc } from "../../utils/trpc";
 import {
-  KeyInformationSection,
-  LocationDetailsSection,
-  DescriptionsSection,
-  AdditionalDetailsSection,
-  MediaSection,
-  RelationsSection,
+  PageBreadcrumbs,
+  PropertyImageGallery,
+  PropertyGalleryModal,
 } from "./components";
-
-// Хелпер displayValue
-const displayValue = (
-  value: string | number | boolean | Date | null | undefined,
-  suffix = "",
-  trueVal = "Yes",
-  falseVal = "No"
-) => {
-  if (
-    value === null ||
-    value === undefined ||
-    (typeof value === "string" && value.trim() === "")
-  )
-    return "-";
-  if (
-    typeof value === "object" &&
-    value !== null &&
-    typeof (value as Date).toLocaleDateString === "function"
-  ) {
-    return (value as Date).toLocaleDateString();
-  }
-  if (typeof value === "boolean") return value ? trueVal : falseVal;
-  if (typeof value === "number") return `${value.toLocaleString()}${suffix}`;
-  return `${value}${suffix}`;
-};
+import { PropertyInfoColumn } from "./LeftColumn";
+import { PropertySidebar } from "./RightColumn";
 
 const PropertyDetailsPage: React.FC = () => {
   const { propertyId } = useParams<{ propertyId: string }>();
+  const [galleryOpened, setGalleryOpened] = useState(false);
+  const [initialSlide, setInitialSlide] = useState(0);
 
   const {
     data: propertyData,
@@ -101,73 +74,82 @@ const PropertyDetailsPage: React.FC = () => {
     );
   }
 
-  console.log(
-    "Тип propertyData.location.createdAt:",
-    typeof propertyData.location?.createdAt
-  );
-  console.log(
-    "Тип propertyData.availabilityDate:",
-    typeof propertyData.availabilityDate
-  );
-
   const property = propertyData;
+
+  const breadcrumbItemsForPage = [
+    { title: "Properties", href: "/properties" },
+    { title: property.propertyTitle, href: `/properties/${property.id}` },
+  ];
+
+  const imagesForGallery = [
+    {
+      id: "main",
+      url: "https://picsum.photos/id/20/1200/800",
+      alt: "Main property view",
+    },
+    {
+      id: "side1",
+      url: "https://picsum.photos/id/101/1200/800",
+      alt: "Property view 1",
+    },
+    {
+      id: "side2",
+      url: "https://picsum.photos/id/1011/1200/800",
+      alt: "Property view 2",
+    },
+  ];
+
+  const openGallery = (index: number) => {
+    setInitialSlide(index);
+    setGalleryOpened(true);
+  };
 
   return (
     <Container fluid p="md">
-      <Group justify="space-between" mb="lg">
-        <Button
-          component={RouterLink}
-          to="/properties"
-          leftSection={<IconArrowLeft size={16} />}
-          variant="outline"
-        >
-          Back to List
-        </Button>
-        <Title order={2} style={{ textAlign: "center", flexGrow: 1 }}>
-          {property.propertyTitle} ({property.propertyRefNo})
-        </Title>
-        <Button
-          component={RouterLink}
-          to={`/properties/${property.id}/edit`}
-          leftSection={<IconEdit size={16} />}
-        >
-          Edit Property
-        </Button>
+      <PageBreadcrumbs items={breadcrumbItemsForPage} />
+
+      <Group justify="space-between" align="center" mb="md">
+        <div></div>
+        <Group>
+          <Button
+            component={RouterLink}
+            to="/properties"
+            leftSection={<IconArrowLeft size={16} />}
+            variant="outline"
+          >
+            Back to List
+          </Button>
+          <Button
+            component={RouterLink}
+            to={`/properties/${property.id}/edit`}
+            leftSection={<IconEdit size={16} />}
+          >
+            Edit Property
+          </Button>
+        </Group>
       </Group>
 
-      <Paper shadow="sm" p="lg" radius="md">
-        <Stack gap="xl">
-          <KeyInformationSection
-            property={property}
-            displayValue={displayValue}
-          />
-          <Divider />
-          <LocationDetailsSection
-            property={property}
-            displayValue={displayValue}
-          />
-          <Divider />
-          <DescriptionsSection
-            property={property}
-            displayValue={displayValue}
-          />
-          <Divider />
-          <AdditionalDetailsSection
-            property={property}
-            displayValue={displayValue}
-          />
-          <Divider />
-          <MediaSection property={property} displayValue={displayValue} />{" "}
-          {/* displayValue не нужен для MediaSection, но оставим для консистентности или уберем */}
-          <Divider />
-          <RelationsSection
-            property={property}
-            displayValue={displayValue}
-          />{" "}
-          {/* displayValue не нужен для RelationsSection */}
-          {/* TODO: Изображения, Документы, Планы этажей */}
-        </Stack>
-      </Paper>
+      <PropertyImageGallery
+        displayImages={imagesForGallery.slice(0, 3)}
+        onImageClick={openGallery}
+        mb="xl"
+      />
+
+      <Grid gutter="xl">
+        <Grid.Col span={{ base: 12, lg: 8 }}>
+          <PropertyInfoColumn property={property} />
+        </Grid.Col>
+        <Grid.Col span={{ base: 12, lg: 4 }}>
+          <PropertySidebar agent={property.agent} />
+        </Grid.Col>
+      </Grid>
+
+      <PropertyGalleryModal
+        opened={galleryOpened}
+        onClose={() => setGalleryOpened(false)}
+        images={imagesForGallery}
+        initialSlide={initialSlide}
+      />
     </Container>
   );
 };

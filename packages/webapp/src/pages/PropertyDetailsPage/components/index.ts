@@ -1,9 +1,6 @@
 // packages/webapp/src/pages/PropertyDetailsPage/components/index.ts
+export * from "./PageBreadcrumbs";
 export * from "./DetailItem";
-export * from "./KeyInformationSection";
-export * from "./LocationDetailsSection";
-export * from "./DescriptionsSection";
-export * from "./AdditionalDetailsSection";
-export * from "./MediaSection";
-export * from "./RelationsSection";
+export * from "./PropertyImageGallery";
+export * from "./PropertyGalleryModal";
 export * from "./types";

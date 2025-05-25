@@ -1,12 +1,12 @@
 // packages/webapp/src/pages/PropertyDetailsPage/components/LocationDetailsSection.tsx
 import React from "react";
 import { Title, SimpleGrid } from "@mantine/core";
-import { DetailItem } from "./DetailItem";
-import { PropertySectionProps } from "./types";
+import { DetailItem } from "../../components/DetailItem";
+import { PropertySectionProps } from "../../components/types";
+import { displayValue } from "../../../../utils/displayFormatters";
 
 export const LocationDetailsSection: React.FC<PropertySectionProps> = ({
   property,
-  displayValue,
 }) => {
   return (
     <section>

@@ -2,8 +2,8 @@
 import React from "react";
 import { Title, Anchor, List } from "@mantine/core";
 import { IconVideo, IconEye } from "@tabler/icons-react";
-import { DetailItem } from "./DetailItem";
-import { PropertySectionProps } from "./types";
+import { DetailItem } from "../../components/DetailItem";
+import { PropertySectionProps } from "../../components/types";
 
 export const MediaSection: React.FC<PropertySectionProps> = ({ property }) => {
   if (

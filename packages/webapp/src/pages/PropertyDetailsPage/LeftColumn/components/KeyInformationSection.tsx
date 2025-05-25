@@ -11,12 +11,12 @@ import {
   IconCalendar,
   IconUserCircle,
 } from "@tabler/icons-react";
-import { DetailItem } from "./DetailItem";
-import { PropertySectionProps } from "./types";
+import { DetailItem } from "../../components/DetailItem";
+import { PropertySectionProps } from "../../components/types";
+import { displayValue } from "../../../../utils/displayFormatters";
 
 export const KeyInformationSection: React.FC<PropertySectionProps> = ({
   property,
-  displayValue,
 }) => {
   return (
     <section>
