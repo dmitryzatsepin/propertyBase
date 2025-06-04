@@ -3,7 +3,7 @@ import express, { Application, Request, Response, NextFunction } from "express";
 import cors from "cors";
 import * as trpcExpress from "@trpc/server/adapters/express";
 import { appRouter } from "./core/trpc/_app";
-// import locationRoutes from "./api/routes/location.routes"; // Закомментировано
+import locationRoutes from "./api/routes/location.routes";
 import { createTRPCContext } from "./core/trpc/trpc";
 import dotenv from "dotenv";
 
@@ -17,8 +17,8 @@ console.log("--- Configuring CORS for origin:", frontendUrl, "---");
 app.use(
   cors({
     origin: frontendUrl,
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"], // Явно перечислим методы
-    allowedHeaders: ["Content-Type", "Authorization"], // Явно перечислим заголовки
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
     optionsSuccessStatus: 204,
   })
@@ -52,7 +52,7 @@ app.get("/api/health", (req: Request, res: Response) => {
   });
 });
 
-// app.use("/api/v1/locations", locationRoutes); // Закомментировано
+app.use("/api/v1/locations", locationRoutes);
 
 // Обработчик 404
 app.use((req: Request, res: Response, next: NextFunction) => {

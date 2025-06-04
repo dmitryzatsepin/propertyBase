@@ -1,18 +1,18 @@
 // packages/webapp/src/router/index.tsx
 import { Routes, Route, Outlet } from "react-router-dom";
 import { AppLayout } from "../components/Layout/AppLayout/AppLayout";
-import PropertiesPage from "../pages/PropertiesPage"; // Наша новая страница
+import PropertiesPage from "../pages/PropertiesPage";
 import PropertyDetailsPage from "../pages/PropertyDetailsPage";
-import { LocationImport } from "../features/LocationImport"; // Твоя фича импорта локаций
+import { LocationImport } from "../features/LocationImport";
 
-// Заглушки для страниц, чтобы можно было создать структуру роутов
+
 const DashboardPage = () => <div>Dashboard Page Content</div>;
-// const AnalyticsReportsPage = () => <div>Analytics Reports Page Content</div>;
-// const ReleasesPage = () => <div>Releases Page Content</div>;
-// const AccountSettingsPage = () => <div>Account Settings Page Content</div>;
-// const AppSettingsPage = () => <div>Application Settings Page Content</div>;
+const AnalyticsReportsPage = () => <div>Analytics Reports Page Content</div>;
+const ReleasesPage = () => <div>Releases Page Content</div>;
+const AccountSettingsPage = () => <div>Account Settings Page Content</div>;
+const AppSettingsPage = () => <div>Application Settings Page Content</div>;
 const ManageLocationsPage = () => <div>Manage Locations Page Content</div>;
-// const ManagePropertiesPage = () => <div>Manage Properties Page Content</div>; // Заменим на PropertiesPage
+const ManagePropertiesPage = () => <div>Manage Properties Page Content</div>;
 const NotFoundPage = () => <div>404 - Page Not Found</div>;
 
 // Обертка для страниц, которые должны использовать AppLayout
@@ -27,11 +27,10 @@ export const AppRoutes = () => {
     <Routes>
       <Route path="/" element={<LayoutWrapper />}>
         <Route index element={<DashboardPage />} />
-        {/* <Route path="analytics/reports" element={<AnalyticsReportsPage />} /> */}
-        {/* <Route path="releases" element={<ReleasesPage />} /> */}
+        <Route path="analytics/reports" element={<AnalyticsReportsPage />} />
+        <Route path="releases" element={<ReleasesPage />} />
         <Route path="locations/import" element={<LocationImport />} />
         <Route path="locations/manage" element={<ManageLocationsPage />} />{" "}
-        {/* Изменил с locations на locations/manage */}
         <Route path="properties" element={<PropertiesPage />} />
         <Route
           path="properties/:propertyId"

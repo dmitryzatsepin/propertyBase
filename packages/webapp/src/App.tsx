@@ -1,6 +1,7 @@
 // packages/webapp/src/App.tsx
 import { MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
+import "@mantine/carousel/styles.css";
 import "@mantine/notifications/styles.css";
 import { BrowserRouter } from "react-router-dom";
 import { AppRoutes } from "./router"; // Импортируем наш компонент с роутами

@@ -58,7 +58,7 @@ export const navigationData: NavGroupData[] = [
       },
       {
         label: "Import Locations (Excel)",
-        link: "/import/locations-excel",
+        link: "/locations/import",
         icon: IconFileImport,
       },
     ],

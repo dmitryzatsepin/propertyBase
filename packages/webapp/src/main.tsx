@@ -2,10 +2,11 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
+import "@mantine/carousel/styles.css";
 import "./index.css";
 
 import { MantineProvider } from "@mantine/core";
-import "@mantine/core/styles.css"; // Стили Mantine
+import "@mantine/core/styles.css";
 import "@mantine/carousel/styles.css";
 import "@mantine/notifications/styles.css";
 

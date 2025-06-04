@@ -84,7 +84,7 @@ const PropertyDetailsPage: React.FC = () => {
   const imagesForGallery = [
     {
       id: "main",
-      url: "https://picsum.photos/id/20/1200/800",
+      url: "https://picsum.photos/1280/720",
       alt: "Main property view",
     },
     {

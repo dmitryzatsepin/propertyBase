@@ -1,0 +1,61 @@
+/* packages/webapp/src/features/Property/components/PropertyCard.module.css */
+.card {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  text-decoration: none; /* Убираем подчеркивание у ссылки-карточки */
+  color: inherit; /* Наследуем цвет текста */
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--mantine-shadow-md);
+}
+
+.imageSection {
+  position: relative; /* Для позиционирования аватара и кнопки "like" */
+  overflow: hidden; /* Чтобы Image не вылезал за пределы Card.Section */
+}
+
+.carouselControl {
+  &[data-inactive] {
+    opacity: 0;
+    cursor: default;
+  }
+  /* Можно добавить стили для самих стрелок, если стандартные не нравятся */
+}
+
+.agentAvatar {
+  position: absolute;
+  bottom: var(--mantine-spacing-sm);
+  left: var(--mantine-spacing-sm);
+  z-index: 1;
+  border: 2px solid var(--mantine-color-white);
+  background-color: var(--mantine-color-body); /* Чтобы аватар не был прозрачным, если нет фото */
+}
+
+.likeButton {
+    position: absolute;
+    top: var(--mantine-spacing-sm);
+    right: var(--mantine-spacing-sm);
+    z-index: 1;
+    background-color: rgba(0,0,0,0.3);
+    color: white;
+}
+
+.likeButton:hover {
+    background-color: rgba(0,0,0,0.5);
+}
+
+
+.titleLink {
+    &:hover {
+    text-decoration: underline;
+    }
+}
+
+.featureIcon {
+  color: var(--mantine-color-gray-6);
+}
+
+.locationIcon {
+    color: var(--mantine-color-gray-6);
+}

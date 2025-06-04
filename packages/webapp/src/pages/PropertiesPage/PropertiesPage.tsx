@@ -8,10 +8,16 @@ import {
   Alert,
   Table,
   Anchor,
+  SimpleGrid,
+  Button,
 } from "@mantine/core";
 import { IconAlertCircle } from "@tabler/icons-react";
 import { Link } from "react-router-dom"; // Для ссылок на детальную страницу (в будущем)
-import { trpc } from "../../utils/trpc"; // Убедись, что путь верный
+import { trpc } from "../../utils/trpc";
+import { PropertyCard } from '../../components/Property/PropertyCard/PropertyCard';
+import type { PropertyWithDetails } from '../PropertyDetailsPage/components/types';
+import type { PropertyListItem } from '../../types/property.types';
+
 const PropertiesPage: React.FC = () => {
   const {
     data,
@@ -57,58 +63,38 @@ const PropertiesPage: React.FC = () => {
     );
   }
   const allProperties = data?.pages.flatMap((page) => page.items) ?? [];
-  const rows = allProperties.map((property) => (
-    <Table.Tr key={property.id}>
-      <Table.Td>
-        <Anchor component={Link} to={`/properties/${property.id}`} size="sm">
-          {property.propertyTitle}
-        </Anchor>
-      </Table.Td>
-      <Table.Td>{property.propertyRefNo}</Table.Td>
-      <Table.Td>{property.location?.city || "-"}</Table.Td>
-      <Table.Td>{property.agent?.name || "-"}</Table.Td>
-      <Table.Td>{property.propertyType?.name || "-"}</Table.Td>
-      <Table.Td>
-        {property.price
-          ? parseFloat(property.price.toString()).toLocaleString()
-          : "-"}
-      </Table.Td>
-    </Table.Tr>
-  ));
 
   return (
     <Container fluid>
-      <Title order={1} mb="md">
-        Properties
-      </Title>
+      <Title order={1} mb="md">Properties</Title>
+
       {allProperties.length > 0 ? (
-        <Table striped highlightOnHover withTableBorder withColumnBorders>
-          <Table.Thead>
-            <Table.Tr>
-              <Table.Th>Title</Table.Th>
-              <Table.Th>Ref No.</Table.Th>
-              <Table.Th>City</Table.Th>
-              <Table.Th>Agent</Table.Th>
-              <Table.Th>Type</Table.Th>
-              <Table.Th>Price</Table.Th>
-            </Table.Tr>
-          </Table.Thead>
-          <Table.Tbody>{rows}</Table.Tbody>
-        </Table>
+        <SimpleGrid
+          cols={{ base: 1, sm: 2, lg: 3 }} // Количество колонок на разных размерах экрана
+          spacing="lg"
+          verticalSpacing="lg"
+        >
+          {allProperties.map((property) => (
+            // Передаем property как Partial, так как list может возвращать не все поля
+            <PropertyCard key={property.id} property={property as PropertyListItem} />
+          ))}
+        </SimpleGrid>
       ) : (
-        !isLoading && <Text>No properties found.</Text> // Показываем "No properties" если загрузка завершена и данных нет
+        !isLoading && <Text>No properties found.</Text>
       )}
+
       {hasNextPage && (
-        <button
+        <Button
           onClick={() => fetchNextPage()}
           disabled={isFetchingNextPage}
-          style={{ marginTop: "20px" }}
+          mt="xl"
+          variant="outline"
+          fullWidth
         >
-          {isFetchingNextPage ? "Loading more..." : "Load More"}
-        </button>
+          {isFetchingNextPage ? 'Loading more...' : 'Load More'}
+        </Button>
       )}
-      {isLoading && data && <Loader size="sm" style={{ marginTop: "20px" }} />}{" "}
-      {/* Лоадер при дозагрузке */}
+      {isLoading && data && <Loader size="sm" style={{ marginTop: '20px', display: 'block', margin: 'auto' }} />}
     </Container>
   );
 };

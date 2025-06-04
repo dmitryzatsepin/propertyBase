@@ -18,6 +18,7 @@ export const list = publicProcedure
             id: true,
             city: true,
             community: true,
+            locationPath: true,
           },
         },
         agent: {

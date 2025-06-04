@@ -18,7 +18,7 @@ export type PropertyLocation = {
   source: "PROPERTY_FINDER" | "BAYUT";
   sourceSpecificId?: string | null;
 };
-export type PropertyAgent = { id: string; name?: string | null; email: string };
+export type PropertyAgent = { id: string; name?: string | null; email: string; avatarUrl?: string | null;};
 export type DictionaryModel = {
   id: string;
   name: string;
